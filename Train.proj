@@ -1,48 +1,42 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
+        <DatasetFolder>Dataset</DatasetFolder>
         <OutputFolder>Output</OutputFolder>
         <ReportFileName>Report.csv</ReportFileName>
         <AutoMLType>NNI</AutoMLType>
     </PropertyGroup>
 
     <ItemGroup>
-        <Dataset Include="iris" Path="Dataset/iris.csv" Task="classification" MLLabel="species" />
-        <Dataset Include="wiki" Path="Dataset/wikipedia-detox-250-line-data.tsv" Task="classification" MLLabel="Sentiment" />
-        <Dataset Include="taxi-fare" Path="Dataset/taxi-fare-train.csv" Task="regression" MLLabel="fare_amount" />
-        <Dataset Include="titanic" Path="Dataset/titanic.csv" Task="classification" MLLabel="Survived" />
+        <Dataset Include="phoneme" Task="classification" MLLabel='"Class"' Url="https://automlbenchmark.blob.core.windows.net/dataset/phoneme.csv" />
+        <Dataset Include="iris" Task="classification" MLLabel="species" Url="https://automlbenchmark.blob.core.windows.net/dataset/iris.csv"/>
+        <Dataset Include="wiki" Task="classification" MLLabel="Sentiment" Url="https://automlbenchmark.blob.core.windows.net/dataset/wikipedia-detox-250-line-data.tsv" />
+        <Dataset Include="titanic" Task="classification" MLLabel="Survived" Url="https://automlbenchmark.blob.core.windows.net/dataset/titanic.csv" />
+        <Dataset Include="adult" Task="classification" MLLabel='"class"' Url="https://automlbenchmark.blob.core.windows.net/dataset/adult.csv" />
+        <Dataset Include="nomao" Task="classification" MLLabel='"class"' Url="https://automlbenchmark.blob.core.windows.net/dataset/nomao.csv" />
+        <Dataset Include="taxi-fare" Task="regression" MLLabel="fare_amount" Url="https://automlbenchmark.blob.core.windows.net/dataset/taxi-fare-train.csv" />
     </ItemGroup>
 
     <ItemGroup>
-        <TrainingTimeInSeconds Include="120" />
+        <TrainingTimeInSeconds Include="1800" />
     </ItemGroup>
 
-    <Target Name="Train" Inputs="@(_Dataset)" DependsOnTargets="_SetAutoMLType;_AddTrainTimeToDataset;_CreateOutputFolderIfNotExist" Outputs="%(_Dataset.Identity)_%(TrainingTimeInSeconds)s">
-        <PropertyGroup>
-            <_Name>%(_Dataset.Identity)_%(TrainingTimeInSeconds)s</_Name>
-            <_Task>%(_Dataset.Task)</_Task>
-            <_Path>%(_Dataset.Path)</_Path>
-            <_Label>%(_Dataset.MLLabel)</_Label>
-            <_TrainTime>%(_Dataset.TrainingTimeInSeconds)</_TrainTime>
-        </PropertyGroup>
+    <Target Name="Train" Inputs="@(_Dataset->'%(_Path)')" DependsOnTargets="_SetAutoMLType;_DownloadDatasetIfNotExist;_AddTrainTimeToDataset;_AddOutputFolderToDataset;_CreateOutputFolderIfNotExist" Outputs="%(_OutputFolder)\MLModel.zip">
+        <ItemGroup>
+            <_Dataset>
+                <_Task>%(_Dataset.Task)</_Task>
+                <_Label>%(_Dataset.MLLabel)</_Label>
+                <_TrainTime>%(_Dataset.TrainingTimeInSeconds)</_TrainTime>
+                <_ModelFolder>$([System.IO.Path]::Combine("%(_OutputFolder)","%(_Dataset._Name).Model"))</_ModelFolder>
+                <_ModelPath>$([System.IO.Path]::Combine("%(_OutputFolder)","%(_Dataset._Name).Model","MLModel.zip"))</_ModelPath>
+            </_Dataset>
+        </ItemGroup>
 
-        <Message Importance="high" Text = "task: $(_Task) name $(_Name)" />
-
-        <!-- Get model path -->
-        <CombinePath BasePath="$(OutputFolder)" Paths="$(_Name)">
-            <Output TaskParameter="CombinedPaths" PropertyName="_TrainResultBase" />
-        </CombinePath>
-    
-        <CombinePath BasePath="$(_TrainResultBase)" Paths="$(_Name).Model">
-            <Output TaskParameter="CombinedPaths" PropertyName="_ModelFolder" />
-        </CombinePath>
-        <CombinePath BasePath="$(_ModelFolder)" Paths="MLModel.zip">
-            <Output TaskParameter="CombinedPaths" PropertyName="_ModelPath" />
-        </CombinePath>
+        <Message Importance="high" Text = "task: %(_Dataset._Task) name %(_Dataset._Name)" />
 
         <!-- Train model, move model to train result folder and remove model folder -->
-        <Exec Command="mlnet $(_Task) --dataset $(_Path) --label-col $(_Label) --train-time $(_TrainTime) --output $(OutputFolder) --name $(_Name) --verbosity q" />
-        <Move SourceFiles="$(_ModelPath)" DestinationFolder="$(_TrainResultBase)" Condition="Exists($(_ModelPath))" />
-        <RemoveDir Directories="$(_ModelFolder)" Condition="Exists($(_ModelFolder))" />
+        <Exec Command="mlnet %(_Dataset._Task) --dataset %(_Dataset._Path) --label-col %(_Dataset._Label) --train-time %(_Dataset._TrainTime) --output $(OutputFolder) --name %(_Dataset._Name) --verbosity q" />
+        <Move SourceFiles="%(_Dataset._ModelPath)" DestinationFolder="%(_OutputFolder)" Condition="Exists(%(_Dataset._ModelPath))" />
+        <RemoveDir Directories="%(_Dataset._ModelFolder)" Condition="Exists(%(_Dataset._ModelFolder))" />
 
         <!-- add mbconfig and model path to output -->
     </Target>
@@ -57,14 +51,28 @@
         <MakeDir Directories="$(OutputFolder)" Condition="!Exists(@(OutputFolder))"/>
     </Target>
 
-    <Target Name="_CheckIfDatasetExist" Inputs="@(Dataset)" Outputs="@(Dataset)">
-        <Error Text="%(Dataset.Path) not exist" Condition="!Exists(%(Dataset.Path))" />
+    <Target Name="_DownloadDatasetIfNotExist">
+        <ItemGroup>
+            <Dataset>
+                <_Path>$(DatasetFolder)/$([System.IO.Path]::GetFileName("%(Dataset.Url)"))</_Path>
+            </Dataset>
+        </ItemGroup>
+        <DownloadFile SourceUrl="%(Dataset.Url)" DestinationFolder="$(DatasetFolder)" />
     </Target>
 
-    <Target Name="_AddTrainTimeToDataset" DependsOnTargets = "_CheckIfDatasetExist" Outputs="@(_Dataset)">
+    <Target Name="_AddTrainTimeToDataset">
         <CreateItem Include="@(Dataset)"  AdditionalMetadata="TrainingTimeInSeconds=%(TrainingTimeInSeconds.Identity)">
             <Output TaskParameter="Include" ItemName="_Dataset"/>
         </CreateItem>
+    </Target>
+
+    <Target Name="_AddOutputFolderToDataset" Inputs="@(_Dataset)" DependsOnTargets="_AddTrainTimeToDataset" Outputs="@(_Dataset)">
+        <ItemGroup>
+            <_Dataset>
+                <_Name>%(_Dataset.Identity)_%(TrainingTimeInSeconds)s</_Name>
+                <_OutputFolder>$([System.IO.Path]::Combine("$(OutputFolder)","%(_Dataset.Identity)_%(TrainingTimeInSeconds)s"))</_OutputFolder>
+            </_Dataset>
+        </ItemGroup>
     </Target>
 
     <Target Name="_SetAutoMLType" >
