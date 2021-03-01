@@ -12,7 +12,7 @@
         <Dataset Include="wiki" Task="classification" MLLabel="Sentiment" Url="https://automlbenchmark.blob.core.windows.net/dataset/wikipedia-detox-250-line-data.tsv" />
         <Dataset Include="titanic" Task="classification" MLLabel="Survived" Url="https://automlbenchmark.blob.core.windows.net/dataset/titanic.csv" />
         <Dataset Include="adult" Task="classification" MLLabel='"class"' Url="https://automlbenchmark.blob.core.windows.net/dataset/adult.csv" />
-        <Dataset Include="nomao" Task="classification" MLLabel='"class"' Url="https://automlbenchmark.blob.core.windows.net/dataset/nomao.csv" />
+        <Dataset Include="nomao" Task="classification" MLLabel='"Class"' Url="https://automlbenchmark.blob.core.windows.net/dataset/nomao.csv" />
         <Dataset Include="taxi-fare" Task="regression" MLLabel="fare_amount" Url="https://automlbenchmark.blob.core.windows.net/dataset/taxi-fare-train.csv" />
     </ItemGroup>
 
