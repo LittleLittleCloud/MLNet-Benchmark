@@ -1,0 +1,11 @@
+# output folder
+Output/**/*
+
+# dataset folder
+Dataset/**/*
+
+# binary log
+*.binlog
+
+# csv
+*.csv

@@ -1,0 +1,83 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <OutputFolder>Output</OutputFolder>
+        <ReportFileName>Report.csv</ReportFileName>
+        <AutoMLType>NNI</AutoMLType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Dataset Include="iris" Path="Dataset/iris.csv" Task="classification" MLLabel="species" />
+        <Dataset Include="wiki" Path="Dataset/wikipedia-detox-250-line-data.tsv" Task="classification" MLLabel="Sentiment" />
+        <Dataset Include="taxi-fare" Path="Dataset/taxi-fare-train.csv" Task="regression" MLLabel="fare_amount" />
+        <Dataset Include="titanic" Path="Dataset/titanic.csv" Task="classification" MLLabel="Survived" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <TrainingTimeInSeconds Include="120" />
+    </ItemGroup>
+
+    <Target Name="Train" Inputs="@(_Dataset)" DependsOnTargets="_SetAutoMLType;_AddTrainTimeToDataset;_CreateOutputFolderIfNotExist" Outputs="%(_Dataset.Identity)_%(TrainingTimeInSeconds)s">
+        <PropertyGroup>
+            <_Name>%(_Dataset.Identity)_%(TrainingTimeInSeconds)s</_Name>
+            <_Task>%(_Dataset.Task)</_Task>
+            <_Path>%(_Dataset.Path)</_Path>
+            <_Label>%(_Dataset.MLLabel)</_Label>
+            <_TrainTime>%(_Dataset.TrainingTimeInSeconds)</_TrainTime>
+        </PropertyGroup>
+
+        <Message Importance="high" Text = "task: $(_Task) name $(_Name)" />
+
+        <!-- Get model path -->
+        <CombinePath BasePath="$(OutputFolder)" Paths="$(_Name)">
+            <Output TaskParameter="CombinedPaths" PropertyName="_TrainResultBase" />
+        </CombinePath>
+    
+        <CombinePath BasePath="$(_TrainResultBase)" Paths="$(_Name).Model">
+            <Output TaskParameter="CombinedPaths" PropertyName="_ModelFolder" />
+        </CombinePath>
+        <CombinePath BasePath="$(_ModelFolder)" Paths="MLModel.zip">
+            <Output TaskParameter="CombinedPaths" PropertyName="_ModelPath" />
+        </CombinePath>
+
+        <!-- Train model, move model to train result folder and remove model folder -->
+        <Exec Command="mlnet $(_Task) --dataset $(_Path) --label-col $(_Label) --train-time $(_TrainTime) --output $(OutputFolder) --name $(_Name) --verbosity q" />
+        <Move SourceFiles="$(_ModelPath)" DestinationFolder="$(_TrainResultBase)" Condition="Exists($(_ModelPath))" />
+        <RemoveDir Directories="$(_ModelFolder)" Condition="Exists($(_ModelFolder))" />
+
+        <!-- add mbconfig and model path to output -->
+    </Target>
+
+    <Target Name="_GetMLNetVersion" Outputs="$(_MLNetVersion)">
+        <Exec Command="mlnet --version" ConsoleToMsBuild="true" >
+            <Output TaskParameter="ConsoleOutput" PropertyName="_MLNetVersion" />
+        </Exec>
+    </Target>
+    <Target Name="_CreateOutputFolderIfNotExist">
+        <Message Importance="high" Text="Create output folder: $(OutputFolder)" Condition="!Exists(@(OutputFolder))"/>
+        <MakeDir Directories="$(OutputFolder)" Condition="!Exists(@(OutputFolder))"/>
+    </Target>
+
+    <Target Name="_CheckIfDatasetExist" Inputs="@(Dataset)" Outputs="@(Dataset)">
+        <Error Text="%(Dataset.Path) not exist" Condition="!Exists(%(Dataset.Path))" />
+    </Target>
+
+    <Target Name="_AddTrainTimeToDataset" DependsOnTargets = "_CheckIfDatasetExist" Outputs="@(_Dataset)">
+        <CreateItem Include="@(Dataset)"  AdditionalMetadata="TrainingTimeInSeconds=%(TrainingTimeInSeconds.Identity)">
+            <Output TaskParameter="Include" ItemName="_Dataset"/>
+        </CreateItem>
+    </Target>
+
+    <Target Name="_SetAutoMLType" >
+        <!-- Set ModelBuilder.AutoMLType -->
+        <Message Importance="high" Text = "Set AutoML type to $(AutoMLType)" />
+    </Target>
+
+    <Target Name="GenerateReportFile" DependsOnTargets="_GetMLNetVersion">
+        <PropertyGroup>
+            <_Command>Tools\GenerateReport.ps1 "$(OutputFolder)" "$(ReportFileName)" "$(_MLNetVersion)"</_Command>
+        </PropertyGroup>
+        <Exec Command="powershell -NonInteractive -executionPolicy Unrestricted -command &quot;&amp; { $(_Command) } &quot;" />
+    </Target>
+    <Target Name="Publish">
+    </Target>
+</Project>
