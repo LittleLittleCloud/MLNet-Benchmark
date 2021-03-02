@@ -7,5 +7,6 @@
         <Dataset Include="adult" Task="classification" MLLabel='"class"' Url="https://automlbenchmark.blob.core.windows.net/dataset/adult.csv" />
         <Dataset Include="nomao" Task="classification" MLLabel='"Class"' Url="https://automlbenchmark.blob.core.windows.net/dataset/nomao.csv" />
         <Dataset Include="taxi-fare" Task="regression" MLLabel="fare_amount" Url="https://automlbenchmark.blob.core.windows.net/dataset/taxi-fare-train.csv" />
+        <Dataset Include="true-car-listing" Task="regression" MLLabel="Price" Url="https://automlbenchmark.blob.core.windows.net/dataset/true_car_listings.csv" />
     </ItemGroup>
 </Project>
