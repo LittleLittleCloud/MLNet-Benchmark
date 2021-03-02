@@ -9,17 +9,18 @@
     <Import Project="Dataset.props" />
 
     <ItemGroup>
-        <TrainingTimeInSeconds Include="1800" />
+        <TrainingTimeInSeconds Include="10" />
     </ItemGroup>
 
-    <Target Name="Train" Inputs="@(_Dataset->'%(_Path)')" DependsOnTargets="_DownloadDatasetIfNotExist;_AddTrainTimeToDataset;_AddOutputFolderToDataset" Outputs="%(_OutputFolder)\MLModel.zip">
+    <Target Name="Train" Inputs="@(_Dataset->'%(_Path)')" DependsOnTargets="_DownloadDatasetIfNotExist;_AddTrainTimeToDataset;_AddOutputFolderToDataset" Outputs="%(_MBConfigPath)">
         <ItemGroup>
             <_Dataset>
                 <_Task>%(_Dataset.Task)</_Task>
                 <_Label>%(_Dataset.MLLabel)</_Label>
                 <_TrainTime>%(_Dataset.TrainingTimeInSeconds)</_TrainTime>
-                <_ModelFolder>$([System.IO.Path]::Combine("%(_OutputFolder)","%(_Dataset._Name).Model"))</_ModelFolder>
-                <_ModelPath>$([System.IO.Path]::Combine("%(_OutputFolder)","%(_Dataset._Name).Model","MLModel.zip"))</_ModelPath>
+                <_ModelFolder>$([System.IO.Path]::Combine("%(_OutputFolder)", "%(_Name)", "%(_Dataset._Name).Model"))</_ModelFolder>
+                <_ArtifactFolder>$([System.IO.Path]::Combine("%(_OutputFolder)", "%(_Name)"))</_ArtifactFolder>
+                <_ModelPath>$([System.IO.Path]::Combine("%(_OutputFolder)","%(_Name)","%(_Dataset._Name).Model","MLModel.zip"))</_ModelPath>
             </_Dataset>
         </ItemGroup>
 
@@ -34,8 +35,8 @@
             <Output TaskParameter="exitcode" PropertyName="exitcode"/>
         </Exec>
 
-        <Message Importance="high" Text = "task: %(_Dataset._Task) name %(_Dataset._Name) fails" Condition="$(exitcode)>0" />
-        <Move SourceFiles="%(_Dataset._ModelPath)" DestinationFolder="%(_OutputFolder)" Condition="Exists(%(_Dataset._ModelPath))" />
+        <Message Importance="high" Text = "task: %(_Dataset._Task) name %(_Dataset._Name) fails" Condition="'$(exitcode)' != '0'" />
+        <Move SourceFiles="%(_Dataset._ModelPath)" DestinationFolder="%(_ArtifactFolder)" Condition="Exists(%(_Dataset._ModelPath))" />
         <RemoveDir Directories="%(_Dataset._ModelFolder)" Condition="Exists(%(_Dataset._ModelFolder))" />
     </Target>
 
@@ -48,7 +49,7 @@
     <Target Name="_DownloadDatasetIfNotExist">
         <ItemGroup>
             <Dataset>
-                <_Path>$(DatasetFolder)/$([System.IO.Path]::GetFileName("%(Dataset.Url)"))</_Path>
+                <_Path>$([System.IO.Path]::Combine("$(DatasetFolder)","$([System.IO.Path]::GetFileName("%(Dataset.Url)"))"))</_Path>
             </Dataset>
         </ItemGroup>
         <DownloadFile SourceUrl="%(Dataset.Url)" DestinationFolder="$(DatasetFolder)" />
@@ -64,7 +65,8 @@
         <ItemGroup>
             <_Dataset>
                 <_Name>%(_Dataset.Identity)_%(TrainingTimeInSeconds)s</_Name>
-                <_OutputFolder>$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)","%(_Dataset.Identity)_%(TrainingTimeInSeconds)s"))</_OutputFolder>
+                <_MBConfigPath>$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)","%(_Dataset.Identity)_%(TrainingTimeInSeconds)s","%(_Dataset.Identity)_%(TrainingTimeInSeconds)s.mbconfig"))</_MBConfigPath>
+                <_OutputFolder>$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)"))</_OutputFolder>
             </_Dataset>
         </ItemGroup>
     </Target>
