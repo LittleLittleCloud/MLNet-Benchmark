@@ -1,0 +1,12 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <ItemGroup>
+        <Dataset Include="phoneme" Task="classification" MLLabel='"Class"' Url="https://automlbenchmark.blob.core.windows.net/dataset/phoneme.csv" />
+        <Dataset Include="iris" Task="classification" MLLabel="species" Url="https://automlbenchmark.blob.core.windows.net/dataset/iris.csv"/>
+        <Dataset Include="wiki" Task="classification" MLLabel="Sentiment" Url="https://automlbenchmark.blob.core.windows.net/dataset/wikipedia-detox-250-line-data.tsv" />
+        <Dataset Include="titanic" Task="classification" MLLabel="Survived" Url="https://automlbenchmark.blob.core.windows.net/dataset/titanic.csv" />
+        <Dataset Include="adult" Task="classification" MLLabel='"class"' Url="https://automlbenchmark.blob.core.windows.net/dataset/adult.csv" />
+        <Dataset Include="nomao" Task="classification" MLLabel='"Class"' Url="https://automlbenchmark.blob.core.windows.net/dataset/nomao.csv" />
+        <Dataset Include="taxi-fare" Task="regression" MLLabel="fare_amount" Url="https://automlbenchmark.blob.core.windows.net/dataset/taxi-fare-train.csv" />
+        <Dataset Include="true-car-listing" Task="regression" MLLabel="Price" Url="https://automlbenchmark.blob.core.windows.net/dataset/true_car_listings.csv" />
+    </ItemGroup>
+</Project>
