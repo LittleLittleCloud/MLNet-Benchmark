@@ -3,7 +3,8 @@
 param(
     [string]$TrainResultFolder,
     [string]$ReportFileName,
-    [string]$mlnetVersion
+    [string]$AutoMLType,
+    [string]$MlnetVersion
 )
 
 
@@ -18,7 +19,8 @@ foreach ($mbConfig in $mbConfigs)
     $i = 1
     foreach($trial in $runHistory.Trials)
     {
-        Add-Member -InputObject $trial -Name "Version" -Value $mlnetVersion -MemberType NoteProperty
+        Add-Member -InputObject $trial -Name "AutoMLType" -Value $AutoMLType -MemberType NoteProperty
+        Add-Member -InputObject $trial -Name "Version" -Value $MlnetVersion -MemberType NoteProperty
         Add-Member -InputObject $trial -Name "Dataset" -Value $datasetName -MemberType NoteProperty
         Add-Member -InputObject $trial -Name "IterationIndex" -Value $i -MemberType NoteProperty
         $i = $i+1
@@ -27,4 +29,4 @@ foreach ($mbConfig in $mbConfigs)
 }
 
 
-$csvs | Select-Object -Property TrainerName,Score,RuntimeInSeconds,Version,Dataset,IterationIndex | Export-Csv -Path $ReportFileName -NoTypeInformation 
+$csvs | Select-Object -Property * | Export-Csv -Path $ReportFileName -NoTypeInformation 
