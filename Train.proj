@@ -2,42 +2,37 @@
     <PropertyGroup>
         <DatasetFolder>Dataset</DatasetFolder>
         <OutputFolder>Output</OutputFolder>
-        <ReportFileName>Report.csv</ReportFileName>
-        <AutoMLType>NNI</AutoMLType>
+        <AutoMLType>AutoML.Net</AutoMLType>
+        <TrainingTimeInSeconds>1800</TrainingTimeInSeconds>
     </PropertyGroup>
 
     <Import Project="Dataset.props" />
 
-    <ItemGroup>
-        <TrainingTimeInSeconds Include="10" />
-    </ItemGroup>
-
-    <Target Name="Train" Inputs="@(_Dataset->'%(_Path)')" DependsOnTargets="_DownloadDatasetIfNotExist;_AddTrainTimeToDataset;_AddOutputFolderToDataset" Outputs="%(_MBConfigPath)">
+    <Target Name="Train" Inputs="@(Dataset->'%(_Path)')" DependsOnTargets="_DownloadDatasetIfNotExist;_AddOutputFolderToDataset" Outputs="%(_MBConfigPath)">
         <ItemGroup>
-            <_Dataset>
-                <_Task>%(_Dataset.Task)</_Task>
-                <_Label>%(_Dataset.MLLabel)</_Label>
-                <_TrainTime>%(_Dataset.TrainingTimeInSeconds)</_TrainTime>
-                <_ModelFolder>$([System.IO.Path]::Combine("%(_OutputFolder)", "%(_Name)", "%(_Dataset._Name).Model"))</_ModelFolder>
-                <_ArtifactFolder>$([System.IO.Path]::Combine("%(_OutputFolder)", "%(_Name)"))</_ArtifactFolder>
-                <_ModelPath>$([System.IO.Path]::Combine("%(_OutputFolder)","%(_Name)","%(_Dataset._Name).Model","MLModel.zip"))</_ModelPath>
-            </_Dataset>
+            <Dataset>
+                <_Task>%(Dataset.Task)</_Task>
+                <_Label>%(Dataset.MLLabel)</_Label>
+                <_TrainTime>$(TrainingTimeInSeconds)</_TrainTime>
+                <_ModelFolder>$([System.IO.Path]::Combine("%(_OutputFolder)", "%(Identity)", "%(Dataset.Identity).Model"))</_ModelFolder>
+                <_ArtifactFolder>$([System.IO.Path]::Combine("%(_OutputFolder)", "%(Identity)"))</_ArtifactFolder>
+                <_ModelPath>$([System.IO.Path]::Combine("%(_OutputFolder)","%(Identity)","%(Dataset.Identity).Model","MLModel.zip"))</_ModelPath>
+            </Dataset>
         </ItemGroup>
 
-        <Message Importance="high" Text = "task: %(_Dataset._Task) name %(_Dataset._Name)" />
+        <Message Importance="high" Text = "task: %(Dataset._Task) name %(Dataset.Identity)" />
 
-        <MakeDir Directories="%(_Dataset._OutputFolder)" Condition="!Exists(%(_Dataset._OutputFolder))"/>
+        <MakeDir Directories="%(Dataset._OutputFolder)" Condition="!Exists(%(Dataset._OutputFolder))"/>
         <!-- Train model, move model to train result folder and remove model folder -->
         <Exec Command="
-            Setx ModelBuilder.AutoML $(AutoMLType);
-            mlnet %(_Dataset._Task) --dataset %(_Dataset._Path) --label-col %(_Dataset._Label) --train-time %(_Dataset._TrainTime) --output %(_Dataset._OutputFolder) --name %(_Dataset._Name) --verbosity q"
+            mlnet %(Dataset._Task) --dataset %(Dataset._Path) --label-col %(Dataset._Label) --train-time %(Dataset._TrainTime) --output %(Dataset._OutputFolder) --name %(Dataset.Identity) --verbosity q"
             ContinueOnError="true">
             <Output TaskParameter="exitcode" PropertyName="exitcode"/>
         </Exec>
 
-        <Message Importance="high" Text = "task: %(_Dataset._Task) name %(_Dataset._Name) fails" Condition="'$(exitcode)' != '0'" />
-        <Move SourceFiles="%(_Dataset._ModelPath)" DestinationFolder="%(_ArtifactFolder)" Condition="Exists(%(_Dataset._ModelPath))" />
-        <RemoveDir Directories="%(_Dataset._ModelFolder)" Condition="Exists(%(_Dataset._ModelFolder))" />
+        <Message Importance="high" Text = "task: %(Dataset._Task) name %(Dataset.Identity) fails" Condition="'$(exitcode)' != '0'" />
+        <Move SourceFiles="%(Dataset._ModelPath)" DestinationFolder="%(_ArtifactFolder)" Condition="Exists(%(Dataset._ModelPath))" />
+        <RemoveDir Directories="%(Dataset._ModelFolder)" Condition="Exists(%(Dataset._ModelFolder))" />
     </Target>
 
     <Target Name="_GetMLNetVersion" Outputs="$(_MLNetVersion)">
@@ -55,25 +50,18 @@
         <DownloadFile SourceUrl="%(Dataset.Url)" DestinationFolder="$(DatasetFolder)" />
     </Target>
 
-    <Target Name="_AddTrainTimeToDataset">
-        <CreateItem Include="@(Dataset)"  AdditionalMetadata="TrainingTimeInSeconds=%(TrainingTimeInSeconds.Identity)">
-            <Output TaskParameter="Include" ItemName="_Dataset"/>
-        </CreateItem>
-    </Target>
-
-    <Target Name="_AddOutputFolderToDataset" Inputs="@(_Dataset)" DependsOnTargets="_AddTrainTimeToDataset" Outputs="@(_Dataset)">
+    <Target Name="_AddOutputFolderToDataset" Inputs="@(Dataset)" Outputs="@(Dataset)">
         <ItemGroup>
-            <_Dataset>
-                <_Name>%(_Dataset.Identity)_%(TrainingTimeInSeconds)s</_Name>
-                <_MBConfigPath>$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)","%(_Dataset.Identity)_%(TrainingTimeInSeconds)s","%(_Dataset.Identity)_%(TrainingTimeInSeconds)s.mbconfig"))</_MBConfigPath>
+            <Dataset>
+                <_MBConfigPath>$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)","%(Dataset.Identity)","%(Dataset.Identity).mbconfig"))</_MBConfigPath>
                 <_OutputFolder>$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)"))</_OutputFolder>
-            </_Dataset>
+            </Dataset>
         </ItemGroup>
     </Target>
 
     <Target Name="GenerateReportFile" DependsOnTargets="_GetMLNetVersion">
         <PropertyGroup>
-            <_Command>Tools\GenerateReport.ps1 "$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)"))" "$(ReportFileName)" "$(AutoMLType)" "$(_MLNetVersion)"</_Command>
+            <_Command>Tools\GenerateReport.ps1 "$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)"))" "Report_$(AutoMLType)_$(TrainingTimeInSeconds)s_$(_MLNetVersion).csv" "$(AutoMLType)" "$(TrainingTimeInSeconds)" "$(_MLNetVersion)"</_Command>
         </PropertyGroup>
         <Exec Command="powershell -NonInteractive -executionPolicy Unrestricted -command &quot;&amp; { $(_Command) } &quot;" />
     </Target>

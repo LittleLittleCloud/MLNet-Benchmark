@@ -4,6 +4,7 @@ param(
     [string]$TrainResultFolder,
     [string]$ReportFileName,
     [string]$AutoMLType,
+    [string]$TrainingTimeInSeconds,
     [string]$MlnetVersion
 )
 
@@ -25,6 +26,7 @@ foreach ($mbConfig in $mbConfigs)
         Add-Member -InputObject $trial -Name "Version" -Value $MlnetVersion -MemberType NoteProperty
         Add-Member -InputObject $trial -Name "Dataset" -Value $datasetName -MemberType NoteProperty
         Add-Member -InputObject $trial -Name "IterationIndex" -Value $i -MemberType NoteProperty
+        Add-Member -InputObject $trial -Name "TrainingTimeInSeconds" -Value $TrainingTimeInSeconds -MemberType NoteProperty
         $i = $i+1
         $csvs += $trial
     }
