@@ -3,7 +3,7 @@
         <DatasetFolder>Dataset</DatasetFolder>
         <OutputFolder>Output</OutputFolder>
         <AutoMLType>AutoML.Net</AutoMLType>
-        <TrainingTimeInSeconds>1800</TrainingTimeInSeconds>
+        <TrainingTimeInSeconds>60</TrainingTimeInSeconds>
     </PropertyGroup>
 
     <Import Project="Dataset.props" />
@@ -20,17 +20,22 @@
             </Dataset>
         </ItemGroup>
 
+        <PropertyGroup>
+            <MlNetPsScript>Tools\RunMLNet.ps1</MlNetPsScript>
+            <MlNetCommand>mlnet</MlNetCommand>
+            <MlNetCommandArgs>%(Dataset._Task) --dataset %(Dataset._Path) --label-col %(Dataset._Label) --train-time %(Dataset._TrainTime) --output %(Dataset._OutputFolder) --name %(Dataset.Identity) --verbosity q</MlNetCommandArgs>
+        </PropertyGroup>
+
         <Message Importance="high" Text = "task: %(Dataset._Task) name %(Dataset.Identity)" />
 
         <MakeDir Directories="%(Dataset._OutputFolder)" Condition="!Exists(%(Dataset._OutputFolder))"/>
         <!-- Train model, move model to train result folder and remove model folder -->
         <Exec Command="
-            mlnet %(Dataset._Task) --dataset %(Dataset._Path) --label-col %(Dataset._Label) --train-time %(Dataset._TrainTime) --output %(Dataset._OutputFolder) --name %(Dataset.Identity) --verbosity q"
+            powershell -NonInteractive -executionPolicy Unrestricted -command &quot;&amp; { $(MlNetPsScript) '$(AutoMLType)' '$(MlNetCommand)' '$(MlNetCommandArgs)' } &quot;"
             ContinueOnError="true">
             <Output TaskParameter="exitcode" PropertyName="exitcode"/>
         </Exec>
 
-        <Message Importance="high" Text = "task: %(Dataset._Task) name %(Dataset.Identity) fails" Condition="'$(exitcode)' != '0'" />
         <Move SourceFiles="%(Dataset._ModelPath)" DestinationFolder="%(_ArtifactFolder)" Condition="Exists(%(Dataset._ModelPath))" />
         <RemoveDir Directories="%(Dataset._ModelFolder)" Condition="Exists(%(Dataset._ModelFolder))" />
     </Target>
