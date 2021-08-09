@@ -1,13 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <PropertyGroup>
-        <DatasetFolder>Dataset</DatasetFolder>
-        <OutputFolder>Output</OutputFolder>
-        <AutoMLType>AutoML.Net</AutoMLType>
-        <TrainingTimeInSeconds>60</TrainingTimeInSeconds>
-    </PropertyGroup>
-
+    <Import Project="Shared.props" />
     <Import Project="Dataset.props" />
-
     <Target Name="Train" Inputs="@(Dataset->'%(_Path)')" DependsOnTargets="_DownloadDatasetIfNotExist;_AddOutputFolderToDataset" Outputs="%(_MBConfigPath)">
         <ItemGroup>
             <Dataset>

@@ -1,0 +1,16 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="Shared.props" />
+    <Import Project="Dataset.props" />
+    <Target Name="Build" Inputs="@(Dataset)" Outputs="@(Dataset->OutputProjectPath)">
+        <ItemGroup>
+            <Dataset>
+                <OutputProjectPath>$([System.IO.Path]::Combine("$(OutputFolder)", "$(AutoMLType)", "%(Identity)"))</OutputProjectPath>
+                <OutputContent>$([System.IO.Path]::Combine("$(OutputFolder)", "$(AutoMLType)", "%(Identity)", "output.txt"))</OutputContent>
+            </Dataset>
+        </ItemGroup>
+
+        <Message Importance="high" Text = "build %(Dataset.OutputProjectPath)"  />
+        <Exec Command="dotnet run --project %(Dataset.OutputProjectPath) > %(Dataset.OutputContent)"
+                ContinueOnError="true" />
+    </Target>
+</Project>
