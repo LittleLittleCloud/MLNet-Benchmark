@@ -22,7 +22,6 @@ foreach ($mbConfig in $mbConfigs)
     foreach($trial in $runHistory.Trials)
     {
         Add-Member -InputObject $trial -Name "AutoMLType" -Value $AutoMLType -MemberType NoteProperty
-        Add-Member -InputObject $trial -Name "Task" -Value $task -MemberType NoteProperty
         Add-Member -InputObject $trial -Name "MLNetVersion" -Value $MlnetVersion -MemberType NoteProperty
         Add-Member -InputObject $trial -Name "Dataset" -Value $datasetName -MemberType NoteProperty
         Add-Member -InputObject $trial -Name "IterationIndex" -Value $i -MemberType NoteProperty

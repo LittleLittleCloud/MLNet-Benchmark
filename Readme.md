@@ -9,4 +9,4 @@
 
 `dotnet msbuild Run.proj`
 
-The command above will test happy path using these [datasets](Dataset.props), including training and build generated projects. And it will generate a final report in the same folder when the test is finished.
+The command above will test happy path using these [datasets](./Dataset.props), including training and build generated projects. And it will generate a final report in the same folder when the test is finished.
