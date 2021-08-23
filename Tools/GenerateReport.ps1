@@ -23,7 +23,7 @@ foreach ($mbConfig in $mbConfigs)
     {
         Add-Member -InputObject $trial -Name "AutoMLType" -Value $AutoMLType -MemberType NoteProperty
         Add-Member -InputObject $trial -Name "Task" -Value $task -MemberType NoteProperty
-        Add-Member -InputObject $trial -Name "Version" -Value $MlnetVersion -MemberType NoteProperty
+        Add-Member -InputObject $trial -Name "MLNetVersion" -Value $MlnetVersion -MemberType NoteProperty
         Add-Member -InputObject $trial -Name "Dataset" -Value $datasetName -MemberType NoteProperty
         Add-Member -InputObject $trial -Name "IterationIndex" -Value $i -MemberType NoteProperty
         Add-Member -InputObject $trial -Name "TrainingTimeInSeconds" -Value $TrainingTimeInSeconds -MemberType NoteProperty
@@ -33,4 +33,4 @@ foreach ($mbConfig in $mbConfigs)
 }
 
 
-$csvs | Select-Object -Property * | Export-Csv -Path $ReportFileName -NoTypeInformation 
+$csvs | Select-Object -Property * -ExcludeProperty Version | Export-Csv -Path $ReportFileName -NoTypeInformation 

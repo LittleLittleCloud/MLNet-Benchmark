@@ -10,7 +10,8 @@
         </ItemGroup>
 
         <Message Importance="high" Text = "build %(Dataset.OutputProjectPath)"  />
-        <Exec Command="dotnet run --project %(Dataset.OutputProjectPath) > %(Dataset.OutputContent)"
-                ContinueOnError="true" />
+        <Exec Command="dotnet build"
+                ContinueOnError="true"
+                WorkingDirectory="%(Dataset.OutputProjectPath)" />
     </Target>
 </Project>

@@ -1,0 +1,8 @@
+<Project InitialTargets="Run" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="Train.proj" />
+    <Import Project="Build.proj" />
+    <Target Name="Run">
+        <MSBuild Projects="Train.proj" Targets="Train;GenerateReportFile" />
+        <MSBuild Projects="Build.proj" Targets="Build" />
+    </Target>
+</Project>
