@@ -3,11 +3,10 @@
 ## To train models for benchmark test
 - Install mlnet cli first, make sure your mlnet's version is no earlier than `16.4.4`.
 
-`dotnet tool install mlnet -g --add-source https://devdiv.pkgs.visualstudio.com/_packaging/ModelBuilder/nuget/v3/index.json`
+`dotnet tool install mlnet -g --add-source https://mlnetcli.blob.core.windows.net/mlnetcli/index.json`
 
-- Then launch a benchark test using the following command:
+- Then launch an E2E test using the following command:
 
-`dotnet msbuild Train.proj -t:Train`
+`dotnet msbuild Run.proj`
 
-## To generate report
-`dotnet msbuild Train.proj -t:GenerateReportFile`
+The command above will test happy path using these [datasets](Dataset.props), including training and build generated projects. And it will generate a final report in the same folder when the test is finished.
