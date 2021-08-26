@@ -1,8 +1,14 @@
 <Project InitialTargets="Run" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Import Project="Train.proj" />
     <Import Project="Build.proj" />
+    <Import Project="MBConfigTrain.proj" />
     <Target Name="Run">
+        <!-- e2e test for classification, regression and recommendation -->
         <MSBuild Projects="Train.proj" Targets="Train;GenerateReportFile" />
+        <MSBuild Projects="Build.proj" Targets="Build" />
+        
+        <!-- e2e test for mbconfig train -->
+        <MSBuild Projects="MBConfigTrain.proj" Targets="Train;GenerateReportFile" />
         <MSBuild Projects="Build.proj" Targets="Build" />
     </Target>
 </Project>
