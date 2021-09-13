@@ -5,4 +5,8 @@
         <AutoMLType>NNI</AutoMLType>
         <TrainingTimeInSeconds>60</TrainingTimeInSeconds>
     </PropertyGroup>
+
+    <Target Name="DownloadDatasetIfNotExist" Inputs="Dataset.Props" Outputs="@(_Dataset->'%(Path)')">
+        <DownloadFile SourceUrl="%(_Dataset.Url)" DestinationFolder="$(DatasetFolder)" />
+    </Target>
 </Project>
