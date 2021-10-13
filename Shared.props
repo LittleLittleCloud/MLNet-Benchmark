@@ -5,5 +5,6 @@
         <AutoMLType>NNI</AutoMLType>
         <TrainingTimeInSeconds>60</TrainingTimeInSeconds>
         <MlNetCommand>dotnet tool run mlnet</MlNetCommand>
+        <MlNetVersion>16.8.2</MlNetVersion>
     </PropertyGroup>
 </Project>
