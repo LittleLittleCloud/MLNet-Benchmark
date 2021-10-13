@@ -78,7 +78,7 @@ stages:
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
-        artifactName: 'Artifact'
+        artifactName: 'Artifacts'
         itemPattern: '**/*.mbconfig'
     - task: DotNetCoreCLI@2
       displayName: Generate benchmark result
