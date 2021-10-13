@@ -14,13 +14,16 @@ strategy:
       image: 'windows-latest'
       dotnetcore: '3.1.x'
       mlnet: 'mlnet'
+      artifact: 'win64'
     'Ubuntu latest':
       image: 'ubuntu-latest'
       dotnetcore: '3.1.x'
       mlnet: 'mlnet'
+      artifact: 'linux'
     'MacOS Big Sur':
       image: 'macOS-11'
       mlnet: 'mlnet'
+      artifact: 'macOS'
       dotnetcore: '3.1.x'
 
 pool:
@@ -60,5 +63,5 @@ steps:
   displayName: Upload artifact
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)Artifacts'
-    ArtifactName: 'Artifacts'
+    ArtifactName: 'Artifacts/$(artifact)'
     publishLocation: 'Container'
