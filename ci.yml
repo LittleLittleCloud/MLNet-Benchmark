@@ -13,14 +13,14 @@ strategy:
     'Win64':
       image: 'windows-latest'
       dotnetcore: '3.1.x'
-      mlnet: 'Microsoft.ML.ModelBuilder.Win64'
+      mlnet: 'mlnet'
     'Ubuntu latest':
       image: 'ubuntu-latest'
       dotnetcore: '3.1.x'
-      mlnet: 'Microsoft.ML.ModelBuilder.Linux'
+      mlnet: 'mlnet'
     'MacOS Big Sur':
       image: 'macOS-11'
-      mlnet: 'Microsoft.ML.ModelBuilder.MacOS'
+      mlnet: 'mlnet'
       dotnetcore: '3.1.x'
 
 pool:
