@@ -85,7 +85,7 @@ stages:
       inputs:
         command: 'custom'
         custom: 'msbuild'
-        arguments: 'Train.proj -t:GenerateReport'
+        arguments: 'Train.proj -t:GenerateReportFile'
     - task: PublishBuildArtifacts@1
       displayName: Upload result
       inputs:
