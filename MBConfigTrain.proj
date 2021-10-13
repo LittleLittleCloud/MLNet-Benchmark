@@ -1,6 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Import Project="Shared.props" />
     <Import Project="Dataset.props" />
+    <Import Project="Train.proj" />
 
     <ItemGroup>
         <_Dataset Include="@(Dataset)">
@@ -10,10 +11,9 @@
         </_Dataset>
     </ItemGroup>
 
-    <Target Name="Train" Inputs="%(_Dataset.LogPath)" Outputs="%(_Dataset.MBConfigPath)">
+    <Target Name="MBConfigTrain" Inputs="%(_Dataset.LogPath)" Outputs="%(_Dataset.MBConfigPath)">
         <Message Importance="high" Text = "train %(_Dataset.Identity) with %(_Dataset.MBConfigPath)"  />
-        <Exec Command="mlnet train --training-config %(_Dataset.MBConfigPath) -v q --log-file-path %(_Dataset.LogPath)"
-                ContinueOnError="true" />
+        <Exec Command="$(MlNetCommand) train --training-config %(_Dataset.MBConfigPath) -v q --log-file-path %(_Dataset.LogPath)"/>
     </Target>
 
     <Target Name="_GetMLNetVersion" Outputs="$(_MLNetVersion)">
