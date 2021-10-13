@@ -9,7 +9,7 @@ trigger:
     - u/*
 
 stages:
-- stage: Run benchmark
+- stage: RunBenchmark
   jobs:
   - job: run
     strategy:
@@ -71,7 +71,7 @@ stages:
 - stage: Validation
   pool: 
     vmImage: 'windows-latest'
-  dependsOn: 'Run benchmark'
+  dependsOn: 'RunBenchmark'
   jobs:
   - job: Validate
     steps:
