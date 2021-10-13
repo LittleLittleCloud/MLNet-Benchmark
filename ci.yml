@@ -38,13 +38,15 @@ steps:
   displayName: 'restore mlnet cli'
   inputs:
     command: 'custom'
-    custom: 'tool install $(mlnet)'
+    custom: 'tool'
+    arguments: 'install $(mlnet)'
 
 - task: DotNetCoreCLI@2
   displayName: 'run benchmark'
   inputs:
     command: 'custom'
-    custom: 'msbuild Run.proj'
+    custom: 'msbuild'
+    arguments: 'Run.proj'
 
 - task: CopyFiles@2
   displayName: Copy log and mbconfig to artifact
