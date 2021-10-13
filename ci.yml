@@ -54,7 +54,7 @@ steps:
     Contents: |
       Output/**/*.mbconfig
       Output/**/*.txt
-    TargetFolder: 'Artifacts'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)Artifacts'
 
 - task: PublishBuildArtifacts@1
   displayName: Upload artifact
