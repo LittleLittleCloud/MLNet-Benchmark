@@ -68,3 +68,27 @@ stages:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)Artifacts'
         ArtifactName: 'Artifacts/$(artifact)'
         publishLocation: 'Container'
+- stage: Validation
+  pool: 
+    vmImage: 'windows-latest'
+  dependsOn: 'Run benchmark'
+  jobs:
+  - job: Validate
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'Artifact'
+        itemPattern: '**/*.mbconfig'
+    - task: DotNetCoreCLI@2
+      displayName: Generate benchmark result
+      inputs:
+        command: 'custom'
+        custom: 'msbuild'
+        arguments: 'Train.proj -t:GenerateReport'
+    - task: PublishBuildArtifacts@1
+      displayName: Upload result
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)result.csv'
+        ArtifactName: 'result.csv'
+        publishLocation: 'Container'
