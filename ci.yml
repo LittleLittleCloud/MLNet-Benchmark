@@ -8,60 +8,63 @@ trigger:
     exclude: 
     - u/*
 
-strategy:
-  matrix:
-    'Win64':
-      image: 'windows-latest'
-      dotnetcore: '3.1.x'
-      mlnet: 'mlnet'
-      artifact: 'win64'
-    'Ubuntu latest':
-      image: 'ubuntu-latest'
-      dotnetcore: '3.1.x'
-      mlnet: 'mlnet'
-      artifact: 'linux'
-    'MacOS Big Sur':
-      image: 'macOS-11'
-      mlnet: 'mlnet'
-      artifact: 'macOS'
-      dotnetcore: '3.1.x'
+stages:
+- stage: Run benchmark
+  jobs:
+  - job: run
+    strategy:
+      matrix:
+        'Win64':
+          image: 'windows-latest'
+          dotnetcore: '3.1.x'
+          mlnet: 'mlnet'
+          artifact: 'win64'
+        'Ubuntu latest':
+          image: 'ubuntu-latest'
+          dotnetcore: '3.1.x'
+          mlnet: 'mlnet'
+          artifact: 'linux'
+        'MacOS Big Sur':
+          image: 'macOS-11'
+          mlnet: 'mlnet'
+          artifact: 'macOS'
+          dotnetcore: '3.1.x'
+    pool:
+      vmImage: $(image)
+      demands: cmd
+    cancelTimeoutInMinutes: 60
+    steps:
+    - task: UseDotNet@2
+      displayName: 'install dotnet $(dotnetcore)'
+      inputs:
+        packageType: 'runtime'
+        version: $(dotnetcore)
 
-pool:
-  vmImage: $(image)
-  demands: cmd
+    - task: DotNetCoreCLI@2
+      displayName: 'restore mlnet cli'
+      inputs:
+        command: 'custom'
+        custom: 'tool'
+        arguments: 'install $(mlnet)'
 
-steps:
-- task: UseDotNet@2
-  displayName: 'install dotnet $(dotnetcore)'
-  inputs:
-    packageType: 'runtime'
-    version: $(dotnetcore)
+    - task: DotNetCoreCLI@2
+      displayName: 'run benchmark'
+      inputs:
+        command: 'custom'
+        custom: 'msbuild'
+        arguments: 'Run.proj'
 
-- task: DotNetCoreCLI@2
-  displayName: 'restore mlnet cli'
-  inputs:
-    command: 'custom'
-    custom: 'tool'
-    arguments: 'install $(mlnet)'
+    - task: CopyFiles@2
+      displayName: Copy log and mbconfig to artifact
+      inputs:
+        Contents: |
+          Output/**/*.mbconfig
+          Output/**/*.txt
+        TargetFolder: '$(Build.ArtifactStagingDirectory)Artifacts'
 
-- task: DotNetCoreCLI@2
-  displayName: 'run benchmark'
-  inputs:
-    command: 'custom'
-    custom: 'msbuild'
-    arguments: 'Run.proj'
-
-- task: CopyFiles@2
-  displayName: Copy log and mbconfig to artifact
-  inputs:
-    Contents: |
-      Output/**/*.mbconfig
-      Output/**/*.txt
-    TargetFolder: '$(Build.ArtifactStagingDirectory)Artifacts'
-
-- task: PublishBuildArtifacts@1
-  displayName: Upload artifact
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)Artifacts'
-    ArtifactName: 'Artifacts/$(artifact)'
-    publishLocation: 'Container'
+    - task: PublishBuildArtifacts@1
+      displayName: Upload artifact
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)Artifacts'
+        ArtifactName: 'Artifacts/$(artifact)'
+        publishLocation: 'Container'
