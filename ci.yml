@@ -28,6 +28,12 @@ pool:
   demands: cmd
 
 steps:
+- task: UseDotNet@2
+  displayName: 'install dotnet $(dotnetcore)'
+  inputs:
+    packageType: 'sdk'
+    version: $(dotnetcore)
+    
 - task: DotNetCoreCLI@2
   displayName: 'restore mlnet cli'
   inputs:
