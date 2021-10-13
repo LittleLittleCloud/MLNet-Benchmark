@@ -80,6 +80,7 @@ stages:
         buildType: 'current'
         artifactName: 'Artifacts'
         itemPattern: '**/*.mbconfig'
+        path: 'Output'
     - task: DotNetCoreCLI@2
       displayName: Generate benchmark result
       inputs:
@@ -89,6 +90,6 @@ stages:
     - task: PublishBuildArtifacts@1
       displayName: Upload result
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)result.csv'
+        PathtoPublish: 'result.csv'
         ArtifactName: 'result.csv'
         publishLocation: 'Container'
