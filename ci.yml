@@ -60,13 +60,13 @@ stages:
         Contents: |
           Output/**/*.mbconfig
           Output/**/*.txt
-        TargetFolder: '$(Build.ArtifactStagingDirectory)Artifacts'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)Artifacts/$(artifact)'
 
     - task: PublishBuildArtifacts@1
       displayName: Upload artifact
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)Artifacts'
-        ArtifactName: 'Artifacts/$(artifact)'
+        ArtifactName: 'Artifacts'
         publishLocation: 'Container'
 - stage: Validation
   pool: 
