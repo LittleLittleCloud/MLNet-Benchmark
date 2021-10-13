@@ -31,9 +31,9 @@ steps:
 - task: UseDotNet@2
   displayName: 'install dotnet $(dotnetcore)'
   inputs:
-    packageType: 'sdk'
+    packageType: 'runtime'
     version: $(dotnetcore)
-    
+
 - task: DotNetCoreCLI@2
   displayName: 'restore mlnet cli'
   inputs:
