@@ -1,0 +1,56 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    exclude: 
+    - u/*
+
+strategy:
+  matrix:
+    'Win64':
+      image: 'windows-latest'
+      dotnetcore: '3.1.x'
+      mlnet: 'Microsoft.ML.ModelBuilder.Win64'
+    'Ubuntu latest':
+      image: 'ubuntu-latest'
+      dotnetcore: '3.1.x'
+      mlnet: 'Microsoft.ML.ModelBuilder.Linux'
+    'MacOS Big Sur':
+      image: 'macOS-11'
+      mlnet: 'Microsoft.ML.ModelBuilder.MacOS'
+      dotnetcore: '3.1.x'
+
+pool:
+  vmImage: $(image)
+  demands: cmd
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: 'restore mlnet cli'
+  inputs:
+    command: 'custom'
+    custom: 'tool install $(mlnet)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'run benchmark'
+  inputs:
+    command: 'custom'
+    custom: 'msbuild Run.proj'
+
+- task: CopyFiles@2
+  displayName: Copy log and mbconfig to artifact
+  inputs:
+    Contents: |
+      Output/**/*.mbconfig
+      Output/**/*.txt
+    TargetFolder: 'Artifacts'
+
+- task: PublishBuildArtifacts@1
+  displayName: Upload artifact
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)Artifacts'
+    ArtifactName: 'Artifacts'
+    publishLocation: 'Container'
