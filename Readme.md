@@ -2,6 +2,7 @@
 
 ## To train models for benchmark test
 - Create dotnet-tools.json for restoring local tools
+
 `dotnet new tool-manifest`
 
 - Install mlnet cli, make sure your mlnet's version is newer than `16.8.3`. Pick up the right mlnet based on your platform.
