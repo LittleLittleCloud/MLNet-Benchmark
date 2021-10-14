@@ -7,4 +7,8 @@
         <MlNetCommand>dotnet tool run mlnet</MlNetCommand>
         <MlNetVersion>16.8.2</MlNetVersion>
     </PropertyGroup>
+
+    <Target Name="DownloadDatasetIfNotExist" Inputs="Dataset.Props" Outputs="@(_Dataset->'%(Path)')">
+        <DownloadFile SourceUrl="%(_Dataset.Url)" DestinationFolder="$(DatasetFolder)" />
+    </Target>
 </Project>
