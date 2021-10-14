@@ -32,11 +32,18 @@ stages:
     cancelTimeoutInMinutes: 60
     steps:
     - task: DotNetCoreCLI@2
+      displayName: 'create manifest'
+      inputs:
+        command: 'custom'
+        custom: 'new'
+        arguments: 'install $(mlnet)'
+        
+    - task: DotNetCoreCLI@2
       displayName: 'restore mlnet cli'
       inputs:
         command: 'custom'
         custom: 'tool'
-        arguments: 'install $(mlnet)'
+        arguments: 'tool-manifest'
 
     - task: DotNetCoreCLI@2
       displayName: 'run benchmark'
