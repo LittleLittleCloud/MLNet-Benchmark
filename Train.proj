@@ -44,9 +44,9 @@
         <DownloadFile SourceUrl="%(_Dataset.Url)" DestinationFolder="$(DatasetFolder)" />
     </Target>
 
-    <Target Name="GenerateReportFile" DependsOnTargets="_GetMLNetVersion">
+    <Target Name="GenerateReportFile">
         <PropertyGroup>
-            <_Command>Tools\GenerateReport.ps1 "$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)"))" "Train_Report_$(AutoMLType)_$(TrainingTimeInSeconds)s_$(_MLNetVersion).csv" "$(AutoMLType)" "$(TrainingTimeInSeconds)" "$(_MLNetVersion)"</_Command>
+            <_Command>Tools\GenerateReport.ps1 "$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)"))" "result.csv" "$(AutoMLType)" "$(TrainingTimeInSeconds)" "$(MlNetVersion)"</_Command>
         </PropertyGroup>
         <Exec Command="powershell -NonInteractive -executionPolicy Unrestricted -command &quot;&amp; { $(_Command) } &quot;" />
     </Target>
