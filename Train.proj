@@ -22,32 +22,32 @@
         
         <PropertyGroup>
             <MlNetPsScript>Tools\RunMLNet.ps1</MlNetPsScript>
-            <MlNetCommand>mlnet</MlNetCommand>
         </PropertyGroup>
 
         <Message Importance="high" Text = "task: %(_Dataset.Task) name %(_Dataset.Identity)" />
 
         <MakeDir Directories="%(_Dataset.OutputFolder)" Condition="!Exists(%(_Dataset.OutputFolder))"/>
         <!-- Train model, move model to train result folder and remove model folder -->
-        <Exec Command="
-            powershell -NonInteractive -executionPolicy Unrestricted -command &quot;&amp; { $(MlNetPsScript) '$(AutoMLType)' '$(MlNetCommand)' '%(_Dataset.MlNetCommandArgs)' } &quot;"
-            ContinueOnError="true">
+        <Message Importance="high" Text="$(MlNetCommand) %(_Dataset.MlNetCommandArgs)" />
+        <Exec Command="$(MlNetCommand) %(_Dataset.MlNetCommandArgs)">
             <Output TaskParameter="exitcode" PropertyName="exitcode"/>
         </Exec>
     </Target>
 
     <Target Name="_GetMLNetVersion" Outputs="$(_MLNetVersion)">
-        <Exec Command="mlnet --version" ConsoleToMsBuild="true" >
+        <Exec Command="$(MlNetCommand) --version" ConsoleToMsBuild="true" >
             <Output TaskParameter="ConsoleOutput" PropertyName="_MLNetVersion" />
         </Exec>
     </Target>
 
-    <Target Name="GenerateReportFile" DependsOnTargets="_GetMLNetVersion">
+    <Target Name="_DownloadDatasetIfNotExist" Inputs="Dataset.Props" Outputs="@(_Dataset->'%(Path)')">
+        <DownloadFile SourceUrl="%(_Dataset.Url)" DestinationFolder="$(DatasetFolder)" />
+    </Target>
+
+    <Target Name="GenerateReportFile">
         <PropertyGroup>
-            <_Command>Tools\GenerateReport.ps1 "$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)"))" "Train_Report_$(AutoMLType)_$(TrainingTimeInSeconds)s_$(_MLNetVersion).csv" "$(AutoMLType)" "$(TrainingTimeInSeconds)" "$(_MLNetVersion)"</_Command>
+            <_Command>Tools\GenerateReport.ps1 "$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)"))" "result.csv" "$(AutoMLType)" "$(TrainingTimeInSeconds)" "$(MlNetVersion)"</_Command>
         </PropertyGroup>
         <Exec Command="powershell -NonInteractive -executionPolicy Unrestricted -command &quot;&amp; { $(_Command) } &quot;" />
-    </Target>
-    <Target Name="Publish">
     </Target>
 </Project>

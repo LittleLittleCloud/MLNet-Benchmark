@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "mlnet":{
+      "version": "16.8.2",
+      "commands": [
+        "mlnet"
+      ]
+    }
+  }
+}
