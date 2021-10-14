@@ -10,6 +10,7 @@ param(
 
 
 $mbConfigs = Get-ChildItem $TrainResultFolder -Recurse | where {$_.Extension -eq ".mbconfig"}
+write-host $mbConfigs
 $csvs = @()
 foreach ($mbConfig in $mbConfigs)
 {

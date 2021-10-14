@@ -46,7 +46,7 @@
 
     <Target Name="GenerateReportFile">
         <PropertyGroup>
-            <_Command>Tools\GenerateReport.ps1 "$([System.IO.Path]::Combine("$(OutputFolder)","$(AutoMLType)"))" "result.csv" "$(AutoMLType)" "$(TrainingTimeInSeconds)" "$(MlNetVersion)"</_Command>
+            <_Command>Tools\GenerateReport.ps1 "$(OutputFolder)" "result.csv" "$(AutoMLType)" "$(TrainingTimeInSeconds)" "$(MlNetVersion)"</_Command>
         </PropertyGroup>
         <Exec Command="powershell -NonInteractive -executionPolicy Unrestricted -command &quot;&amp; { $(_Command) } &quot;" />
     </Target>
