@@ -4,7 +4,9 @@
 - Install mlnet cli first, make sure your mlnet's version is newer than `16.8.3`. Pick up the right mlnet based on your platform.
 
 `dotnet tool install microsoft.ml.modelbuilder.cli.osx` // MacOS
+
 `dotnet tool install microsoft.ml.modelbuilder.cli.linux64` // Linux
+
 `dotnet tool install microsoft.ml.modelbuilder.cli.win64` // Win
 
 - Then launch an E2E test using the following command:
