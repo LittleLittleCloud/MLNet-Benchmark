@@ -2,7 +2,7 @@
     <Import Project="Shared.props" />
 
     <ItemGroup>
-        <Dataset Include = "motor-vehicle" Task="forecasting" MLLabel="x" MLTimeCol="index" MLHorizon="10" Url="https://automlbenchmark.blob.core.windows.net/dataset/MotorVehicle.csv" />
+        <Dataset Include = "motor-vehicle" Task="forecastcing" MLLabel="x" MLTimeCol="index" MLHorizon="10" Url="https://automlbenchmark.blob.core.windows.net/dataset/MotorVehicle.csv" />
         <Dataset Include = "btcusdt-1h" Task="forecasting" MLLabel="Open" MLTimeCol="Date" MLHorizon="10" Url="https://automlbenchmark.blob.core.windows.net/dataset/Binance_BTCUSDT_1h.csv" />
         <Dataset Include = "temperature" Task="forecasting" MLLabel="Vancouver" MLTimeCol="datetime" MLHorizon="10" Url="https://automlbenchmark.blob.core.windows.net/dataset/temperature.csv" />
     </ItemGroup>

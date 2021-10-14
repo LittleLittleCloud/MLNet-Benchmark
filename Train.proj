@@ -15,8 +15,10 @@
     <Target Name="Train" Inputs="%(_Dataset.Path)" DependsOnTargets="DownloadDatasetIfNotExist" Outputs="%(_Dataset.MBConfigPath)">
         <ItemGroup>
             <_Dataset>
-                <MlNetCommandArgs Condition="%(_Dataset.Task)!=recommendation">%(_Dataset.Task) --dataset %(_Dataset.Path) --label-col %(_Dataset.MLLabel) --train-time $(TrainingTimeInSeconds) --output %(_Dataset.OutputFolder) --name %(_Dataset.Identity) --verbosity q --log-file-path %(_Dataset.LogPath)</MlNetCommandArgs>
+                <MlNetCommandArgs Condition="%(_Dataset.Task)==classification">%(_Dataset.Task) --dataset %(_Dataset.Path) --label-col %(_Dataset.MLLabel) --train-time $(TrainingTimeInSeconds) --output %(_Dataset.OutputFolder) --name %(_Dataset.Identity) --verbosity q --log-file-path %(_Dataset.LogPath)</MlNetCommandArgs>
+                <MlNetCommandArgs Condition="%(_Dataset.Task)==regression">%(_Dataset.Task) --dataset %(_Dataset.Path) --label-col %(_Dataset.MLLabel) --train-time $(TrainingTimeInSeconds) --output %(_Dataset.OutputFolder) --name %(_Dataset.Identity) --verbosity q --log-file-path %(_Dataset.LogPath)</MlNetCommandArgs>
                 <MlNetCommandArgs Condition="%(_Dataset.Task)==recommendation">%(_Dataset.Task) --dataset %(_Dataset.Path) --rating-col %(_Dataset.MLLabel) --user-col %(_Dataset.MLUserId) --item-col %(_Dataset.MLItemId) --train-time $(TrainingTimeInSeconds) --output %(_Dataset.OutputFolder) --name %(_Dataset.Identity) --verbosity q --log-file-path %(_Dataset.LogPath)</MlNetCommandArgs>
+                <MlNetCommandArgs Condition="%(_Dataset.Task)==forecasting">%(_Dataset.Task) --dataset %(_Dataset.Path) --label-col %(_Dataset.MLLabel) --time-col %(_Dataset.MLTimeCol) --horizon %(_Dataset.MLHorizon) --train-time $(TrainingTimeInSeconds) --output %(_Dataset.OutputFolder) --name %(_Dataset.Identity) --verbosity q --log-file-path %(_Dataset.LogPath)</MlNetCommandArgs>
             </_Dataset>
         </ItemGroup>
         
