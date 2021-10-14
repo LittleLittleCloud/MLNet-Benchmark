@@ -1,24 +1,5 @@
 {
   "version": 1,
   "isRoot": true,
-  "tools": {
-    "microsoft.ml.modelbuilder.cli.osx":{
-      "version": "16.8.3",
-      "commands": [
-        "mlnet"
-      ]
-    },
-    "microsoft.ml.modelbuilder.cli.win64":{
-      "version": "16.8.3",
-      "commands": [
-        "mlnet"
-      ]
-    },
-    "microsoft.ml.modelbuilder.cli.linux64":{
-      "version": "16.8.3",
-      "commands": [
-        "mlnet"
-      ]
-    }
-  }
+  "tools": {}
 }
