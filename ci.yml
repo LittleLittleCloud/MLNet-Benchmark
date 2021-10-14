@@ -17,16 +17,16 @@ stages:
         'Win64':
           image: 'windows-latest'
           dotnetcore: '3.1.x'
-          mlnet: 'mlnet'
+          mlnet: 'microsoft.ml.modelbuilder.cli.win64'
           artifact: 'win64'
         'Ubuntu latest':
           image: 'ubuntu-latest'
           dotnetcore: '3.1.x'
-          mlnet: 'mlnet'
+          mlnet: 'microsoft.ml.modelbuilder.cli.linux64'
           artifact: 'linux'
         'MacOS Big Sur':
           image: 'macOS-11'
-          mlnet: 'mlnet'
+          mlnet: 'microsoft.ml.modelbuilder.cli.osx'
           artifact: 'macOS'
           dotnetcore: '3.1.x'
     pool:
