@@ -91,5 +91,5 @@ stages:
       displayName: Upload result
       inputs:
         PathtoPublish: 'result.csv'
-        ArtifactName: 'result.csv'
+        ArtifactName: 'result'
         publishLocation: 'Container'
