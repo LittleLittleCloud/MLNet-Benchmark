@@ -3,9 +3,9 @@
 
     <Target Name="Run">
         <PropertyGroup>
-            <PackageId Condition="'$(OS)' == 'Windows_NT'">microsoft.ml.modelbuilder.cli.win64</PackageId>
-            <PackageId Condition="('$(OS)' == 'Unix') AND '$([MSBuild]::IsOsPlatform())' == 'True' ">microsoft.ml.modelbuilder.cli.osx</PackageId>
-            <PackageId Condition="('$(OS)' == 'Unix') AND '$([MSBuild]::IsOsPlatform())' != 'True' ">microsoft.ml.modelbuilder.cli.linux64</PackageId>
+            <PackageId Condition="$([MSBuild]::IsOSPlatform('Windows'))">microsoft.ml.modelbuilder.cli.win64</PackageId>
+            <PackageId Condition="$([MSBuild]::IsOSPlatform('OSX'))">microsoft.ml.modelbuilder.cli.osx</PackageId>
+            <PackageId Condition="$([MSBuild]::IsOSPlatform('Linux'))">microsoft.ml.modelbuilder.cli.linux64</PackageId>
         </PropertyGroup>
 
         <Message Importance="high" Text = "installing $(PackageId) with version $(MlNetVersion)" />
