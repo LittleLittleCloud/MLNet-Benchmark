@@ -1,0 +1,14 @@
+<Project InitialTargets="Run" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="Shared.props" />
+
+    <Target Name="Run">
+        <PropertyGroup>
+            <PackageId Condition="$([MSBuild]::IsOSPlatform('Windows'))">microsoft.ml.modelbuilder.cli.win64</PackageId>
+            <PackageId Condition="$([MSBuild]::IsOSPlatform('OSX'))">microsoft.ml.modelbuilder.cli.osx</PackageId>
+            <PackageId Condition="$([MSBuild]::IsOSPlatform('Linux'))">microsoft.ml.modelbuilder.cli.linux64</PackageId>
+        </PropertyGroup>
+
+        <Message Importance="high" Text = "installing $(PackageId) with version $(MlNetVersion)" />
+        <Exec Command="dotnet tool install $(PackageId) --version $(MlNetVersion)" />
+    </Target>
+</Project>

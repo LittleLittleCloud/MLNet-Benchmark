@@ -16,36 +16,34 @@ stages:
       matrix:
         'Win64':
           image: 'windows-latest'
-          dotnetcore: '3.1.x'
-          mlnet: 'mlnet'
+          mlnet: 'microsoft.ml.modelbuilder.cli.win64'
           artifact: 'win64'
         'Ubuntu latest':
           image: 'ubuntu-latest'
-          dotnetcore: '3.1.x'
-          mlnet: 'mlnet'
+          mlnet: 'microsoft.ml.modelbuilder.cli.linux64'
           artifact: 'linux'
         'MacOS Big Sur':
           image: 'macOS-11'
-          mlnet: 'mlnet'
+          mlnet: 'microsoft.ml.modelbuilder.cli.osx'
           artifact: 'macOS'
-          dotnetcore: '3.1.x'
     pool:
       vmImage: $(image)
       demands: cmd
     cancelTimeoutInMinutes: 60
     steps:
-    - task: UseDotNet@2
-      displayName: 'install dotnet $(dotnetcore)'
-      inputs:
-        packageType: 'runtime'
-        version: $(dotnetcore)
-
     - task: DotNetCoreCLI@2
-      displayName: 'restore mlnet cli'
+      displayName: 'create manifest'
       inputs:
         command: 'custom'
-        custom: 'tool'
-        arguments: 'install $(mlnet)'
+        custom: 'new'
+        arguments: 'tool-manifest'
+        
+    - task: DotNetCoreCLI@2
+      displayName: 'install mlnet cli'
+      inputs:
+        command: 'custom'
+        custom: 'msbuild'
+        arguments: 'InstallMLNet.proj'
 
     - task: DotNetCoreCLI@2
       displayName: 'run benchmark'
