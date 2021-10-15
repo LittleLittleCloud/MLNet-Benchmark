@@ -39,11 +39,11 @@ stages:
         arguments: 'tool-manifest'
         
     - task: DotNetCoreCLI@2
-      displayName: 'restore mlnet cli'
+      displayName: 'install mlnet cli'
       inputs:
         command: 'custom'
-        custom: 'tool'
-        arguments: 'install $(mlnet)'
+        custom: 'msbuild'
+        arguments: 'InstallMLNet.proj'
 
     - task: DotNetCoreCLI@2
       displayName: 'run benchmark'
