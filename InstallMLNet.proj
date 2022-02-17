@@ -3,9 +3,9 @@
 
     <Target Name="Run">
         <PropertyGroup>
-            <PackageId Condition="$([MSBuild]::IsOSPlatform('Windows'))">microsoft.mlnet-win-x64</PackageId>
-            <PackageId Condition="$([MSBuild]::IsOSPlatform('OSX'))">microsoft.mlnet-osx-x64</PackageId>
-            <PackageId Condition="$([MSBuild]::IsOSPlatform('Linux'))">microsoft.mlnet-linux-x64</PackageId>
+            <PackageId Condition="$([MSBuild]::IsOSPlatform('Windows'))">mlnet-win-x64</PackageId>
+            <PackageId Condition="$([MSBuild]::IsOSPlatform('OSX'))">mlnet-osx-x64</PackageId>
+            <PackageId Condition="$([MSBuild]::IsOSPlatform('Linux'))">mlnet-linux-x64</PackageId>
         </PropertyGroup>
 
         <Message Importance="high" Text = "installing $(PackageId) with version $(MlNetVersion)" />
