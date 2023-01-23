@@ -16,15 +16,12 @@ stages:
       matrix:
         'Win64':
           image: 'windows-latest'
-          mlnet: 'microsoft.ml.modelbuilder.cli.win64'
           artifact: 'win64'
         'Ubuntu latest':
           image: 'ubuntu-latest'
-          mlnet: 'microsoft.ml.modelbuilder.cli.linux64'
           artifact: 'linux'
         'MacOS Big Sur':
           image: 'macOS-11'
-          mlnet: 'microsoft.ml.modelbuilder.cli.osx'
           artifact: 'macOS'
     pool:
       vmImage: $(image)
