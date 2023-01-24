@@ -2,7 +2,7 @@
     <ItemGroup>
         <Dataset Include="titanic" Task="classification" MLLabel="Survived" Url="https://automlbenchmark.blob.core.windows.net/dataset/titanic.csv" />
         <Dataset Include="true-car-listing" Task="regression" MLLabel="Price" Url="https://automlbenchmark.blob.core.windows.net/dataset/true_car_listings.csv" />
-        <!-- <Dataset Include="motor-vehicle" Task="forecasting" MLLabel="x" MLTimeCol="index" MLHorizon="10" Url="https://automlbenchmark.blob.core.windows.net/dataset/MotorVehicle.csv" /> -->
+        <Dataset Include="Binance_BTCUSDT_1h" Task="forecasting" MLLabel="Open" MLTimeCol="Date" MLHorizon="10" Url="https://automlbenchmark.blob.core.windows.net/dataset/Binance_BTCUSDT_1h.csv" />
         <Dataset Include="recommendation-rating-train" Task="recommendation" MLLabel="rating" MLUserId="userId" MLItemId="movieId" Url="https://automlbenchmark.blob.core.windows.net/dataset/recommendation-ratings-train.csv" />
     </ItemGroup>
 </Project>
