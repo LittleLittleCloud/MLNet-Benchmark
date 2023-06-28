@@ -5,7 +5,7 @@
         <AutoMLType>NNI</AutoMLType>
         <TrainingTimeInSeconds>60</TrainingTimeInSeconds>
         <MlNetCommand>dotnet tool run mlnet</MlNetCommand>
-        <MlNetVersion>16.14.2</MlNetVersion>
+        <MlNetVersion>16.17.0</MlNetVersion>
     </PropertyGroup>
 
     <Target Name="DownloadDatasetIfNotExist" Inputs="Dataset.Props" Outputs="@(_Dataset->'%(Path)')">
