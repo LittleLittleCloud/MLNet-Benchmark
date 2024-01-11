@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "PACKAGE_ID": {
-      "version": "17.17.2-dev",
+      "version": "16.15.1",
       "commands": [
         "mlnet"
       ]
