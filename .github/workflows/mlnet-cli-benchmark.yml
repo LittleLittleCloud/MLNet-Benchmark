@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [ 'windows-latest', 'ubuntu-latest', 'macOS-lastest' ]
-    runs-on: ${{ matrix.image }}
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
