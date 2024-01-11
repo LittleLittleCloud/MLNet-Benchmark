@@ -1,3 +1,5 @@
+.vs
+
 # output folder
 Output/**/*
 
@@ -9,3 +11,16 @@ Dataset/**/*
 
 # csv
 *.csv
+
+###############
+#    folder   #
+###############
+/**/DROP/
+/**/TEMP/
+/**/packages/
+/**/bin/
+/**/obj/
+
+# build artifacts for web
+_site/
+api/

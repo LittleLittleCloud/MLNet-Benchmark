@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+	  <OutputType>Exe</OutputType>
+	  <TargetFramework>net6.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
+		<LangVersion>Preview</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="RestoreMLNetCli*.config" />
+		<EmbeddedResource Include="dotnet-tools.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="ApprovalTests" Version="6.0.0" />
+	  <PackageReference Include="FluentAssertions" Version="6.12.0" />
+	</ItemGroup>
+
+</Project>
