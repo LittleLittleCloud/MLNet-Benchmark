@@ -24,7 +24,7 @@ jobs:
         global-json-file: global.json
     - name: run benchmark
       run: |
-        cd MLNetBenchmark && dotnet run
+        cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
         
 
     
