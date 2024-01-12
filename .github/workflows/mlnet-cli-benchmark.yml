@@ -14,7 +14,7 @@ jobs:
   benchmark:
     strategy:
       matrix:
-        os: [ 'windows-latest', 'ubuntu-latest', 'macOS-lastest' ]
+        os: [ 'windows-latest', 'macOS-lastest' ]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
