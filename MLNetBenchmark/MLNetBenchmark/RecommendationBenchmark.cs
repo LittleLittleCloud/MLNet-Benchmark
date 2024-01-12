@@ -23,7 +23,7 @@ internal static class RecommendationBenchmark
         success = await Utils.DownloadFileFromUrlAsync(movieRecommendationDatasetUrl, movieRecommendationDatasetPath);
         success.Should().BeTrue();
 
-        var command = @"recommendation --dataset recommendation-ratings-train.csv --rating-col rating --user-col userId --item-col movieId --train-time 20 --name movie";
+        var command = @"recommendation --dataset recommendation-ratings-train.csv --split-ratio 0.7 --rating-col rating --user-col userId --item-col movieId --train-time 20 --name movie";
         Console.WriteLine($"Running command: {command}");
 
         success = Utils.RunMLNetCLI(installingDirectory, command);
