@@ -13,84 +13,24 @@ stages:
   jobs:
   - job: run
     strategy:
+      maxParallel: 5
       matrix:
         'Win64':
           image: 'windows-latest'
-          artifact: 'win64'
-        'Ubuntu latest':
+        'Ubuntu x64':
           image: 'ubuntu-latest'
-          artifact: 'linux'
-        'MacOS Big Sur':
+        'MacOS x64':
           image: 'macOS-11'
-          artifact: 'macOS'
     pool:
       vmImage: $(image)
       demands: cmd
     cancelTimeoutInMinutes: 60
     steps:
-    - task: DotNetCoreCLI@2
-      displayName: 'create manifest'
-      inputs:
-        command: 'custom'
-        custom: 'new'
-        arguments: 'tool-manifest'
-        
     - task: UseDotNet@2
       displayName: Use .NET 6.0
       inputs:
-        packageType: 'sdk'
-        version: '6.x'
-        
-    - task: DotNetCoreCLI@2
-      displayName: 'install mlnet cli'
-      inputs:
-        command: 'custom'
-        custom: 'msbuild'
-        arguments: 'InstallMLNet.proj'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'run benchmark'
-      inputs:
-        command: 'custom'
-        custom: 'msbuild'
-        arguments: 'Run.proj'
-
-    - task: CopyFiles@2
-      displayName: Copy log and mbconfig to artifact
-      inputs:
-        Contents: |
-          Output/**/*.mbconfig
-          Output/**/*.txt
-        TargetFolder: '$(Build.ArtifactStagingDirectory)Artifacts/$(artifact)'
-
-    - task: PublishBuildArtifacts@1
-      displayName: Upload artifact
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)Artifacts'
-        ArtifactName: 'Artifacts'
-        publishLocation: 'Container'
-- stage: Validation
-  pool: 
-    vmImage: 'windows-latest'
-  dependsOn: 'RunBenchmark'
-  jobs:
-  - job: Validate
-    steps:
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'Artifacts'
-        itemPattern: '**/*.mbconfig'
-        path: 'Output'
-    - task: DotNetCoreCLI@2
-      displayName: Generate benchmark result
-      inputs:
-        command: 'custom'
-        custom: 'msbuild'
-        arguments: 'Train.proj -t:GenerateReportFile'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload result
-      inputs:
-        PathtoPublish: 'result.csv'
-        ArtifactName: 'result'
-        publishLocation: 'Container'
+        useGlobalJson: true
+  
+    - run: |
+      cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
+      displayName: Run benchmark
