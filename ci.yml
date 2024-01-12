@@ -20,7 +20,7 @@ stages:
         'Ubuntu x64':
           image: 'ubuntu-latest'
         'MacOS x64':
-          image: 'macOS-11'
+          image: 'macOS-latest'
     pool:
       vmImage: $(image)
       demands: cmd
@@ -31,6 +31,6 @@ stages:
       inputs:
         useGlobalJson: true
   
-    - run: |
-      cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
-      displayName: Run benchmark
+    - script: |
+        cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
+      displayName: 'Run Benchmark'
