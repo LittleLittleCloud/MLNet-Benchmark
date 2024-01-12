@@ -14,8 +14,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="ApprovalTests" Version="6.0.0" />
-	  <PackageReference Include="FluentAssertions" Version="6.12.0" />
+		<PackageReference Include="ApprovalTests" Version="6.0.0" />
+		<PackageReference Include="FluentAssertions" Version="6.12.0" />
+
+		<PackageReference Condition="$(RuntimeIdentifier)=='linux-x64'" Include="MKL.NET.linux-x64" Version="2022.0.1.117" />
+		<PackageReference Condition="$(RuntimeIdentifier)=='osx-x64'" Include="MKL.NET.osx-x64" Version="2022.0.1.117" />
 	</ItemGroup>
 
 </Project>
