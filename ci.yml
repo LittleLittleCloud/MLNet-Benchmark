@@ -30,6 +30,12 @@ stages:
       displayName: Use .NET 6.0
       inputs:
         useGlobalJson: true
+    - task: NuGetToolInstaller@1
+      displayName: 'Install NuGet'
+    - task: NuGetAuthenticate@0
+      inputs:
+        forceReinstallCredentialProvider: true
+
   
     - script: |
         cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
