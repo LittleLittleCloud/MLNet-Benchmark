@@ -32,11 +32,9 @@ stages:
         useGlobalJson: true
     - task: NuGetToolInstaller@1
       displayName: 'Install NuGet'
-    - task: NuGetAuthenticate@0
+    - task: NuGetAuthenticate@1
       inputs:
         forceReinstallCredentialProvider: true
-
-  
     - script: |
         cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
       displayName: 'Run Benchmark'
