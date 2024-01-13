@@ -1,6 +1,6 @@
 // await ObjectDetectionBenchmark.RunCatObjectDetectionVottAsync();
+await ForecastingBenchmark.RunBitcoinForecastingAsync();
 await ObjectDetectionBenchmark.RunCatObjectDetectionCoCoAsync();
-// await ForecastingBenchmark.RunBitcoinForecastingAsync();
 await RegressionBenchmark.RunTaxiFareAsync();
 await BinaryClassificationBenchmark.RunTitanicAsync();
 await RecommendationBenchmark.RunMovieRecommendationAsync();

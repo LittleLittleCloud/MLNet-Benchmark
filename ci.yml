@@ -21,6 +21,8 @@ stages:
           image: 'ubuntu-latest'
         'MacOS arm64':
           image: 'macOS-13-arm64'
+        'MacOS x64':
+          image: 'macOS-13'
     pool:
       vmImage: $(image)
       demands: cmd
