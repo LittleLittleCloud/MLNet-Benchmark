@@ -20,7 +20,7 @@ internal static class Utils
         // write dotnet-tool.json from embedded resource to workingDirectory according to os platform
         // available platform: win-x64, linux-x64, osx-x64, linux-arm64, win-arm64, osx-arm64
 
-        var packageID = (OperatingSystem.IsWindows(), OperatingSystem.IsLinux(), OperatingSystem.IsMacOS(), RuntimeInformation.OSArchitecture) switch
+        var packageID = (OperatingSystem.IsWindows(), OperatingSystem.IsLinux(), OperatingSystem.IsMacOS(), RuntimeInformation.ProcessArchitecture) switch
         {
             (true, false, false, Architecture.X64) => "mlnet-win-x64",
             (false, true, false, Architecture.X64) => "mlnet-linux-x64",
