@@ -37,6 +37,9 @@ stages:
     - task: NuGetAuthenticate@1
       inputs:
         forceReinstallCredentialProvider: true
+    - script: apt-get update -y && apt-get --assume-yes install libomp5 && apt-get --assume-yes install libomp-dev
+      displayName: Install libomp on Ubuntu
+      condition: eq(variables['image'], 'ubuntu-latest')
     - script: brew update && brew install libomp && brew link libomp --force
       displayName: Install libomp on macOS
       condition: eq(variables['image'], 'macOS-13')

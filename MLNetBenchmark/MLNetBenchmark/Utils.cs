@@ -7,7 +7,7 @@ internal static class Utils
 {
     public static bool RestoreMLNetCLI(string installingDirectory)
     {
-        Console.WriteLine("Restore dotnet interactive tool");
+        Console.WriteLine("Restore dotnet cli");
         // write RestoreMLNetCli.config from embedded resource to this.workingDirectory
         var assembly = Assembly.GetAssembly(typeof(Program))!;
         var resourceName = "MLNetBenchmark.RestoreMLNetCli.config";
