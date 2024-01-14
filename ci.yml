@@ -40,7 +40,7 @@ stages:
     - script: apt-get update -y && apt-get --assume-yes install libomp5 && apt-get --assume-yes install libomp-dev
       displayName: Install libomp on Ubuntu
       condition: eq(variables['image'], 'ubuntu-latest')
-    - script: brew update && brew install libomp && brew link libomp --force
+    - script: brew update && brew install libomp5 && brew link libomp5 --force
       displayName: Install libomp on macOS
       condition: eq(variables['image'], 'macOS-13')
     - script: |
