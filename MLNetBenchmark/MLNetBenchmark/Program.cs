@@ -6,9 +6,9 @@ await RegressionBenchmark.RunTaxiFareAsync();
 
 if (RuntimeInformation.ProcessArchitecture != Architecture.Arm64)
 {
+    await ImageClassificationBenchmark.RunWeatherDataAsync();
     await TextClassificationBenchmark.RunWikipediaAsync();
     await ObjectDetectionBenchmark.RunCatObjectDetectionVottAsync();
     await ObjectDetectionBenchmark.RunCatObjectDetectionCoCoAsync();
-    await ImageClassificationBenchmark.RunWeatherDataAsync();
     await ForecastingBenchmark.RunBitcoinForecastingAsync();
 }
