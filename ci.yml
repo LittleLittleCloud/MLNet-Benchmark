@@ -41,7 +41,10 @@ stages:
       displayName: Install libomp on Ubuntu
       condition: eq(variables['image'], 'ubuntu-latest')
     - script: brew update && brew install libomp && brew link libomp --force
-      displayName: Install libomp on macOS
+      displayName: Install libomp on macOS arm64
+      condition: eq(variables['image'], 'macOS-13-arm64')
+    - script: export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=TRUE && brew unlink libomp && brew install $(Build.SourcesDirectory)/libomp.rb --build-from-source --formula
+      displayName: Install libomp on macOS x64
       condition: eq(variables['image'], 'macOS-13')
     - script: |
         cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
