@@ -1,8 +1,14 @@
-await TextClassificationBenchmark.RunWikipediaAsync();
+using System.Runtime.InteropServices;
+
 await BinaryClassificationBenchmark.RunTitanicAsync();
-await ObjectDetectionBenchmark.RunCatObjectDetectionVottAsync();
-await ForecastingBenchmark.RunBitcoinForecastingAsync();
-await ObjectDetectionBenchmark.RunCatObjectDetectionCoCoAsync();
-await RegressionBenchmark.RunTaxiFareAsync();
 await RecommendationBenchmark.RunMovieRecommendationAsync();
-await ImageClassificationBenchmark.RunWeatherDataAsync();
+await RegressionBenchmark.RunTaxiFareAsync();
+
+if (RuntimeInformation.ProcessArchitecture != Architecture.Arm64)
+{
+    await TextClassificationBenchmark.RunWikipediaAsync();
+    await ObjectDetectionBenchmark.RunCatObjectDetectionVottAsync();
+    await ObjectDetectionBenchmark.RunCatObjectDetectionCoCoAsync();
+    await ImageClassificationBenchmark.RunWeatherDataAsync();
+    await ForecastingBenchmark.RunBitcoinForecastingAsync();
+}
