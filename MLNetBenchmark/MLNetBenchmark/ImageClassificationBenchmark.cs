@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.ML.ModelBuilder.Configuration.Extension;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,14 @@ internal static class ImageClassificationBenchmark
 
         var consoleApp = Path.Combine(installingDirectory, "weather");
         Directory.Exists(consoleApp).Should().BeTrue();
+        var mbConfigFile = Path.Combine(consoleApp, "weather.mbconfig");
+        File.Exists(mbConfigFile).Should().BeTrue();
+        var config = Utils.LoadTrainingConfigurationFromFileAsync(mbConfigFile);
+        config.IsImageClassification().Should().BeTrue();
+        config.IsLocalGpuTraining().Should().BeFalse();
+        config.IsLocalImageClassification().Should().BeTrue();
+        config.GetMetricName().Should().Be("MicroAccuracy");
+        config.GetBestTrial()!.Score.Should().BeGreaterThan(0.5);
         Console.WriteLine($"build console app: {consoleApp}");
         success = Utils.BuildConsoleApp(consoleApp, "build");
         success.Should().BeTrue();

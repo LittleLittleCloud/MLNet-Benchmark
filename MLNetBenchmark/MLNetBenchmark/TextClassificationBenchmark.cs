@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.ML.ModelBuilder.Configuration.Extension;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,14 @@ internal static class TextClassificationBenchmark
 
         var consoleApp = Path.Combine(installingDirectory, "sentiment");
         Directory.Exists(consoleApp).Should().BeTrue();
+        var mbConfigFile = Path.Combine(consoleApp, "sentiment.mbconfig");
+        File.Exists(mbConfigFile).Should().BeTrue();
+        var config = Utils.LoadTrainingConfigurationFromFileAsync(mbConfigFile);
+        config.IsTextClassification().Should().BeTrue();
+        config.IsLocalGpuTraining().Should().BeFalse();
+        config.GetTextColumnName().Should().Be("SentimentText");
+        config.GetLabelName().Should().Be("Sentiment");
+        config.GetBestTrial()!.Score.Should().BeGreaterThan(0.4);
         Console.WriteLine($"build console app: {consoleApp}");
         success = Utils.BuildConsoleApp(consoleApp, "build");
         success.Should().BeTrue();

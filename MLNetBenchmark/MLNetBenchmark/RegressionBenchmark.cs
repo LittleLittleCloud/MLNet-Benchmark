@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.ML.ModelBuilder.Configuration.Extension;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,16 @@ internal static class RegressionBenchmark
 
         var consoleApp = Path.Combine(installingDirectory, "tax_fare");
         Directory.Exists(consoleApp).Should().BeTrue();
+        var mbConfigFile = Path.Combine(consoleApp, "tax_fare.mbconfig");
+        File.Exists(mbConfigFile).Should().BeTrue();
+        var config = Utils.LoadTrainingConfigurationFromFileAsync(mbConfigFile);
+        config.IsRegression().Should().BeTrue();
+        config.GetTrainingTime().Should().Be(30);
+        config.GetLabelName().Should().Be("fare_amount");
+        config.IsMaximizeMetric().Should().BeTrue();
+        config.GetMetricName().Should().Be("RSquared");
+        config.GetBestTrial()!.Score.Should().BeGreaterThan(0.5);
+
         Console.WriteLine($"build console app: {consoleApp}");
         success = Utils.BuildConsoleApp(consoleApp, "build");
         success.Should().BeTrue();

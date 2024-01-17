@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using Microsoft.ML.ModelBuilder.Configuration;
+using Microsoft.ML.ModelBuilder.Configuration.Extension;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,6 +70,19 @@ internal static class ObjectDetectionBenchmark
 
         var consoleApp = Path.Combine(installingDirectory, "cat");
         Directory.Exists(consoleApp).Should().BeTrue();
+        var mbConfigFile = Path.Combine(consoleApp, "cat.mbconfig");
+        File.Exists(mbConfigFile).Should().BeTrue();
+        var config = Utils.LoadTrainingConfigurationFromFileAsync(mbConfigFile);
+        config.IsObjectDetection().Should().BeTrue();
+        config.IsLocalGpuTraining().Should().BeFalse();
+        config.IsLocalObjectDetection().Should().BeTrue();
+        config.GetMetricName().Should().Be("mAP50_95");
+        (config.TrainingOption as ILocalObjectDetectionTrainingOption)?.Epoch.Should().Be(1);
+        (config.TrainingOption as ILocalObjectDetectionTrainingOption)?.ResizeOption?.Width.Should().Be(800);
+        (config.TrainingOption as ILocalObjectDetectionTrainingOption)?.ResizeOption?.Height.Should().Be(600);
+        config.GetBestTrial()!.Score.Should().BeGreaterThan(0.1);
+        config.TrainResult!.Trials.Should().HaveCount(1);
+
         Console.WriteLine($"build console app: {consoleApp}");
         success = Utils.BuildConsoleApp(consoleApp, "build");
         success.Should().BeTrue();

@@ -1,4 +1,8 @@
 ﻿using FluentAssertions;
+using Microsoft.ML.ModelBuilder.Configuration;
+using Microsoft.ML.ModelBuilder.Configuration.Extension;
+using Newtonsoft.Json;
+using System.Text.Json;
 
 internal static class BinaryClassificationBenchmark
 {
@@ -27,6 +31,18 @@ internal static class BinaryClassificationBenchmark
 
         var consoleApp = Path.Combine(installingDirectory, "titanic");
         Directory.Exists(consoleApp).Should().BeTrue();
+
+        var mbConfigFile = Path.Combine(consoleApp, "titanic.mbconfig");
+        File.Exists(mbConfigFile).Should().BeTrue();
+        var config = Utils.LoadTrainingConfigurationFromFileAsync(mbConfigFile);
+
+        config.Should().NotBeNull();
+        config!.IsClassification().Should().BeTrue();
+        config!.GetTrainingTime().Should().Be(20);
+        config!.GetBestTrial().Should().NotBeNull();
+        config!.GetBestTrial()!.Score.Should().BeGreaterThan(0.5);
+        config!.GetLabelName().Should().Be("Survived");
+        config!.IsMaximizeMetric().Should().BeTrue();
 
         Console.WriteLine($"build console app: {consoleApp}");
         success = Utils.BuildConsoleApp(consoleApp, "build");

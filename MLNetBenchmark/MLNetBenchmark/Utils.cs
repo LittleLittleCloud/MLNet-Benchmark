@@ -1,4 +1,8 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.ML.ModelBuilder.Configuration;
+using Microsoft.ML.ModelBuilder.Configuration.Converter;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -121,6 +125,22 @@ internal static class Utils
         process.WaitForExit();
 
         return process.ExitCode == 0;
+    }
+
+    internal static ITrainingConfiguration LoadTrainingConfigurationFromFileAsync(string filePath)
+    {
+        var json = File.ReadAllText(filePath);
+        var jsonSerializerSettings = new JsonSerializerSettings()
+        {
+            Formatting = Formatting.Indented,
+            NullValueHandling = NullValueHandling.Ignore,
+            Converters = new List<JsonConverter>()
+                {
+                    new StringEnumConverter(),
+                    new ParameterConverter(),
+                },
+        };
+        return JsonConvert.DeserializeObject<ITrainingConfiguration>(json, jsonSerializerSettings) ?? throw new Exception("Failed to deserialize training configuration");
     }
 
     internal static bool BuildConsoleApp(string installingDirectory, string command)

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.ML.ModelBuilder.Configuration.Extension;
 
 internal static class RecommendationBenchmark
 {
@@ -26,6 +27,18 @@ internal static class RecommendationBenchmark
 
         var consoleApp = Path.Combine(installingDirectory, "movie");
         Directory.Exists(consoleApp).Should().BeTrue();
+
+        var mbConfigFile = Path.Combine(consoleApp, "movie.mbconfig");
+        File.Exists(mbConfigFile).Should().BeTrue();
+        var config = Utils.LoadTrainingConfigurationFromFileAsync(mbConfigFile);
+
+        config.IsRecommendation().Should().BeTrue();
+        config.GetTrainingTime().Should().Be(100);
+        config.GetUserId().Should().Be("userId");
+        config.GetItemId().Should().Be("movieId");
+        config.GetLabelName().Should().Be("rating");
+        config.IsMaximizeMetric().Should().BeTrue();
+
         Console.WriteLine($"build console app: {consoleApp}");
         success = Utils.BuildConsoleApp(consoleApp, "build");
         success.Should().BeTrue();
