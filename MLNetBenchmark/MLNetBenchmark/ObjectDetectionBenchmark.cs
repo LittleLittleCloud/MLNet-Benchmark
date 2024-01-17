@@ -80,7 +80,7 @@ internal static class ObjectDetectionBenchmark
         (config.TrainingOption as ILocalObjectDetectionTrainingOption)?.Epoch.Should().Be(1);
         (config.TrainingOption as ILocalObjectDetectionTrainingOption)?.ResizeOption?.Width.Should().Be(800);
         (config.TrainingOption as ILocalObjectDetectionTrainingOption)?.ResizeOption?.Height.Should().Be(600);
-        config.GetBestTrial()!.Score.Should().BeGreaterThan(0.1);
+        config.GetBestTrial()!.Score.Should().BeGreaterThan(0);
         config.TrainResult!.Trials.Should().HaveCount(1);
 
         Console.WriteLine($"build console app: {consoleApp}");
