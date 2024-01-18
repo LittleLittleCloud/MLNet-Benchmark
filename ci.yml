@@ -55,7 +55,7 @@ stages:
       displayName: 'Run Benchmark on $(image)'
       condition: eq(variables['image'], 'ubuntu-latest')
     - script: |
-        cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
+        cd MLNetBenchmark && cd MLNetBenchmark && IS_ARM64=1 dotnet run
       displayName: 'Run Benchmark on $(image)'
       condition: eq(variables['image'], 'macOS-13-arm64')
     - script: |
