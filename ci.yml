@@ -75,4 +75,8 @@ stages:
         dotnet run
       displayName: 'Run Benchmark on $(image)'
       condition: eq(variables['image'], 'macOS-13')
+      continueOnError: true
+    - script: |
+        ls /Users/runner/.local/share/ModelBuilder/torchsharp-cpu-0.99.5/bin/Release/netstandard2.0/osx-x64/
+      condition: eq(variables['image'], 'macOS-13')
 
