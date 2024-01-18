@@ -48,4 +48,23 @@ stages:
       condition: eq(variables['image'], 'macOS-13')
     - script: |
         cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
-      displayName: 'Run Benchmark'
+      displayName: 'Run Benchmark on $(image)'
+      condition: eq(variables['image'], 'windows-latest')
+    - script: |
+        cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
+      displayName: 'Run Benchmark on $(image)'
+      condition: eq(variables['image'], 'ubuntu-latest')
+    - script: |
+        cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
+      displayName: 'Run Benchmark on $(image)'
+      condition: eq(variables['image'], 'macOS-13-arm64')
+    - script: |
+        echo $PATH
+        echo $LD_LIBRARY_PATH
+        echo $DYLD_LIBRARY_PATH
+        echo $Path
+      displayName: 'print env path on $(image)'
+      condition: eq(variables['image'], 'macOS-13')
+    - script: |
+        cd MLNetBenchmark && cd MLNetBenchmark && DYLD_LIBRARY_PATH=/Users/runner/.local/share/ModelBuilder/torchsharp-cpu-0.99.5/bin/Release/netstandard2.0/osx-x64/:$DYLD_LIBRARY_PATH DYLD_PRINT_LIBRARIES=1 dotnet run
+
