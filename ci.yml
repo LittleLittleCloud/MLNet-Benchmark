@@ -68,9 +68,7 @@ stages:
     - script: |
         cd MLNetBenchmark
         cd MLNetBenchmark
-        DYLD_PRINT_LIBRARIES=1
-        ls /Users/runner/.local/share/ModelBuilder/torchsharp-cpu-0.99.5/bin/Release/netstandard2.0/osx-x64/
-        PATH=/Users/runner/.local/share/ModelBuilder/torchsharp-cpu-0.99.5/:$PATH dotnet run
+        DYLD_PRINT_LIBRARIES=1 dotnet run
       displayName: 'Run Benchmark on $(image)'
       condition: eq(variables['image'], 'macOS-13')
       continueOnError: true
