@@ -13,84 +13,66 @@ stages:
   jobs:
   - job: run
     strategy:
+      maxParallel: 5
       matrix:
         'Win64':
           image: 'windows-latest'
-          artifact: 'win64'
-        'Ubuntu latest':
+        'Ubuntu x64':
           image: 'ubuntu-latest'
-          artifact: 'linux'
-        'MacOS Big Sur':
-          image: 'macOS-11'
-          artifact: 'macOS'
+        'MacOS arm64':
+          image: 'macOS-13-arm64'
+        'MacOS x64':
+          image: 'macOS-13'
     pool:
       vmImage: $(image)
       demands: cmd
     cancelTimeoutInMinutes: 60
     steps:
-    - task: DotNetCoreCLI@2
-      displayName: 'create manifest'
-      inputs:
-        command: 'custom'
-        custom: 'new'
-        arguments: 'tool-manifest'
-        
     - task: UseDotNet@2
       displayName: Use .NET 6.0
       inputs:
-        packageType: 'sdk'
-        version: '6.x'
-        
-    - task: DotNetCoreCLI@2
-      displayName: 'install mlnet cli'
+        useGlobalJson: true
+    - task: NuGetToolInstaller@1
+      displayName: 'Install NuGet'
+    - task: NuGetAuthenticate@1
       inputs:
-        command: 'custom'
-        custom: 'msbuild'
-        arguments: 'InstallMLNet.proj'
+        forceReinstallCredentialProvider: true
+    - script: sudo apt-get update -y && sudo apt-get --assume-yes install libomp5 && sudo apt-get --assume-yes install libomp-dev
+      displayName: Install libomp on Ubuntu
+      condition: eq(variables['image'], 'ubuntu-latest')
+    - script: brew update && brew install libomp && brew link libomp --force
+      displayName: Install libomp on macOS arm64
+      condition: eq(variables['image'], 'macOS-13-arm64')
+    - script: export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=TRUE && brew install $(Build.SourcesDirectory)/libomp.rb --build-from-source --formula
+      displayName: Install libomp on macOS x64
+      condition: eq(variables['image'], 'macOS-13')
+    - script: |
+        cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
+      displayName: 'Run Benchmark on $(image)'
+      condition: eq(variables['image'], 'windows-latest')
+    - script: |
+        cd MLNetBenchmark && cd MLNetBenchmark && dotnet run
+      displayName: 'Run Benchmark on $(image)'
+      condition: eq(variables['image'], 'ubuntu-latest')
+    - script: |
+        cd MLNetBenchmark && cd MLNetBenchmark && IS_ARM64=1 dotnet run
+      displayName: 'Run Benchmark on $(image)'
+      condition: eq(variables['image'], 'macOS-13-arm64')
+    - script: |
+        echo $PATH
+        echo $LD_LIBRARY_PATH
+        echo $DYLD_LIBRARY_PATH
+        echo $Path
+      displayName: 'print env path on $(image)'
+      condition: eq(variables['image'], 'macOS-13')
+    - script: |
+        cd MLNetBenchmark
+        cd MLNetBenchmark
+        DYLD_PRINT_LIBRARIES=1 dotnet run
+      displayName: 'Run Benchmark on $(image)'
+      condition: eq(variables['image'], 'macOS-13')
+      continueOnError: true
+    - script: |
+        ls -R /Users/runner/.local/share/ModelBuilder/torchsharp-cpu-0.99.5/
+      condition: eq(variables['image'], 'macOS-13')
 
-    - task: DotNetCoreCLI@2
-      displayName: 'run benchmark'
-      inputs:
-        command: 'custom'
-        custom: 'msbuild'
-        arguments: 'Run.proj'
-
-    - task: CopyFiles@2
-      displayName: Copy log and mbconfig to artifact
-      inputs:
-        Contents: |
-          Output/**/*.mbconfig
-          Output/**/*.txt
-        TargetFolder: '$(Build.ArtifactStagingDirectory)Artifacts/$(artifact)'
-
-    - task: PublishBuildArtifacts@1
-      displayName: Upload artifact
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)Artifacts'
-        ArtifactName: 'Artifacts'
-        publishLocation: 'Container'
-- stage: Validation
-  pool: 
-    vmImage: 'windows-latest'
-  dependsOn: 'RunBenchmark'
-  jobs:
-  - job: Validate
-    steps:
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        buildType: 'current'
-        artifactName: 'Artifacts'
-        itemPattern: '**/*.mbconfig'
-        path: 'Output'
-    - task: DotNetCoreCLI@2
-      displayName: Generate benchmark result
-      inputs:
-        command: 'custom'
-        custom: 'msbuild'
-        arguments: 'Train.proj -t:GenerateReportFile'
-    - task: PublishBuildArtifacts@1
-      displayName: Upload result
-      inputs:
-        PathtoPublish: 'result.csv'
-        ArtifactName: 'result'
-        publishLocation: 'Container'

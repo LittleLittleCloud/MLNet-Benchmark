@@ -1,20 +1,24 @@
 ## automl benchmark test using mlnet cli
 
-## To train models for benchmark test
-- Create dotnet-tools.json for restoring local tools
+## Start a benchmark test
 
-`dotnet new tool-manifest`
+You can start a benchmark test on a specific mlnet cli by creating a pull request with the following steps:
+- Go to [dotnet-tools.json](./MLNetBenchmark/MLNetBenchmark/dotnet-tools.json)
+- Update the mlnet cli version to the one you want to test
 
-- Install mlnet cli, make sure your mlnet's version is newer than `16.8.3`. Pick up the right mlnet based on your platform.
+```json
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "PACKAGE_ID": {
+      "version": "16.15.1", // update this version
+      "commands": [
+        "mlnet"
+      ]
+    }
+  }
+}
+```
+- Create a pull request with the updated version
 
-`dotnet tool install microsoft.ml.modelbuilder.cli.osx` // MacOS
-
-`dotnet tool install microsoft.ml.modelbuilder.cli.linux64` // Linux
-
-`dotnet tool install microsoft.ml.modelbuilder.cli.win64` // Win
-
-- Then launch an E2E test using the following command:
-
-`dotnet msbuild Run.proj`
-
-The command above will test happy path using these [datasets](./Dataset.props), including training, build generated projects, retraining with exsiting mbconfigs and build those generated projects again.

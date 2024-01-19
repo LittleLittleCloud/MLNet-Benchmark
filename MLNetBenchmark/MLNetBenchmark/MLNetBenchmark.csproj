@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+	  <OutputType>Exe</OutputType>
+	  <TargetFramework>net6.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
+		<LangVersion>Preview</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="RestoreMLNetCli*.config" />
+		<EmbeddedResource Include="dotnet-tools.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ApprovalTests" Version="6.0.0" />
+		<PackageReference Include="FluentAssertions" Version="6.12.0" />
+		<PackageReference Include="Microsoft.ML.AutoML" Version="0.22.0-preview.24060.2" />
+		<PackageReference Include="Microsoft.ML.ModelBuilder.Configuration" Version="16.17.8" />
+	</ItemGroup>
+
+</Project>
