@@ -29,7 +29,7 @@ stages:
     cancelTimeoutInMinutes: 60
     steps:
     - task: UseDotNet@2
-      displayName: Use .NET 6.0
+      displayName: Use .NET
       inputs:
         useGlobalJson: true
     - task: NuGetToolInstaller@1
@@ -72,7 +72,3 @@ stages:
       displayName: 'Run Benchmark on $(image)'
       condition: eq(variables['image'], 'macOS-13')
       continueOnError: true
-    - script: |
-        ls -R /Users/runner/.local/share/ModelBuilder/torchsharp-cpu-0.99.5/
-      condition: eq(variables['image'], 'macOS-13')
-
